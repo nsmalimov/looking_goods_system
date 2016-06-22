@@ -1,7 +1,36 @@
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-// …
+    $title = $_POST['title'];
+    $description = $_POST['description'];
+    $url_image = $_POST['url_image'];
+    $cost = $_POST['cost'];
+    $id_num = $_POST['id_num'];
+
+    $dbhost = 'localhost:3306';
+    $dbuser = 'root';
+    $dbpass = 've;br';
+    $conn = mysql_connect($dbhost, $dbuser);
+
+    if (!$conn) {
+        die('Could not connect: ' . mysql_error());
+    }
+
+    $sql = "INSERT INTO goods ".
+        "(id_num,cost,title,url_image,description)".
+        "VALUES ".
+        "('$id_num','$cost','$title','$url_image','$description')";
+
+    mysql_select_db('goods_data');
+    $retval = mysql_query($sql, $conn);
+
+    if (!$retval) {
+        die('Could not insert data: ' . mysql_error());
+    }
+
+    echo "<script>alert('done');</script>";
+
+    mysql_close($conn);
 }
 
 ?>

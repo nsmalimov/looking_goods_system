@@ -23,8 +23,6 @@ $sql = 'SELECT id, id_num, cost, title, url_image, description FROM goods WHERE 
 mysql_select_db('goods_data');
 $retval = mysql_query( $sql, $conn );
 
-
-
 if(! $retval )
 {
     die('Could not get data: ' . mysql_error());

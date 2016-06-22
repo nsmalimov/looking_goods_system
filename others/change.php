@@ -1,7 +1,18 @@
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-// …
+    switch ($_POST['command']) {
+        case "select":
+            echo "i равно 0";
+            break;
+        
+        case "change":
+            echo "i равно 1";
+            break;
+        
+        default:
+            break;
+    }
 }
 
 ?>
@@ -18,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input class="form-control" id="inputIdNum" type="number" placeholder="Id">
             </div>
         </div>
+
+        <a type="button" class="btn btn-primary" onclick="selectByIdNum()">Показать</a>
 
         <div class="form-group row">
             <div class="col-sm-12">
@@ -44,6 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
 
-        <a type="button" class="btn btn-primary" id="createChanelButton" onclick="confirmChangeFunc()">Готово</a>
+        <a type="button" class="btn btn-primary" onclick="confirmChangeFunc()">Готово</a>
     </div>
 </div>

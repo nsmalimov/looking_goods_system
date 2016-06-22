@@ -239,12 +239,12 @@ function confirmDeleteFunc() {
 
 function confirmChangeFunc() {
     var json_create = {};
-    json_create.type = "POST";
     json_create.title = $("#inputTitle").val();
     json_create.description = $("#inputDescription").val();
     json_create.url_image = $("#inputImageUrl").val();
     json_create.cost = $("#inputCost").val();
-    json_create.id_num = $("#inputIdnum").val();
+    json_create.id_num = $("#inputIdNum").val();
+    json_create.command = "change";
 
     var serverUrl = serverPath + "/looking_goods_system/others/change.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
@@ -252,14 +252,22 @@ function confirmChangeFunc() {
 
 function confirmCreateFunc() {
     var json_create = {};
-    json_create.type = "POST";
     json_create.title = $("#inputTitle").val();
     json_create.description = $("#inputDescription").val();
     json_create.url_image = $("#inputImageUrl").val();
     json_create.cost = $("#inputCost").val();
-    json_create.id_num = $("#inputIdnum").val();
+    json_create.id_num = $("#inputIdNum").val();
 
     var serverUrl = serverPath + "/looking_goods_system/others/create.php";
+    serverPostFunc(serverUrl, json_create, "#goodsList");
+}
+
+function selectByIdNum() {
+    var json_create = {};
+    json_create.id_num = ("#inputIdNum").val();
+    json_create.command = "select";
+    
+    var serverUrl = serverPath + "/looking_goods_system/others/change.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
 
