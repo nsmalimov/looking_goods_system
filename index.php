@@ -38,9 +38,9 @@
                 <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary" id="deleteButton"
                    onclick="deleteFunc()">Удалить</a>
                 <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary" id="changeButton"
-                   onclick="changeFunc()">Список</a>
+                   onclick="changeFunc()">Редактировать</a>
                 <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary" id="showAllButton"
-                   onclick="showAllFunc()">Редактировать</a>
+                   onclick="showAllFunc()">Список</a>
                 <div id="goodsList"></div>
             </div>
         </div>
