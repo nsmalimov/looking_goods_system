@@ -5,7 +5,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $id_num = $_POST['id_num'];
 
-
     $dbhost = 'localhost:3306';
     $dbuser = 'root';
     $dbpass = 've;br';
@@ -15,20 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die('Could not connect: ' . mysql_error());
     }
 
-    try {
-        $sql = 'DELETE FROM goods WHERE id_num = ' . $id_num;
+    $sql = 'DELETE FROM goods WHERE id_num = ' . $id_num;
 
-        mysql_select_db('goods_data');
-        $retval = mysql_query($sql, $conn);
-        echo "<script>alert('done');</script>";
+    mysql_select_db('goods_data');
+    $retval = mysql_query($sql, $conn);
 
-    } catch (Exception $e) {
-        echo "<script>
-alert('some wrong');
-</script>";
-    } finally {
-        mysql_close($conn);
+    if (!$retval) {
+        die('Could not delete data: ' . mysql_error());
     }
+
+    echo "<script>alert('done');</script>";
+
+    mysql_close($conn);
 
 }
 ?>

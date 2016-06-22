@@ -1,5 +1,4 @@
 <?php
-echo $_SERVER['REQUEST_METHOD'];
 
 $num = $_POST['num'];
 
