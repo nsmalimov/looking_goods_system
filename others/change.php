@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-group row">
             <div class="col-sm-12">
-                <input class="form-control" id="inputId" type="number" placeholder="Id">
+                <input class="form-control" id="inputIdNum" type="number" placeholder="Id">
             </div>
         </div>
 
@@ -44,6 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
 
-        <a type="button" class="btn btn-primary" id="createChanelButton" onclick="createChanel()">Готово</a>
+        <a type="button" class="btn btn-primary" id="createChanelButton" onclick="confirmChangeFunc()">Готово</a>
     </div>
 </div>

@@ -51,10 +51,23 @@ function serverPostFunc(serverUrl, jsonData, idWhereNeedPut) {
     //var ajaxurl = serverUrl,
     //    data =  {'action': "111"};
     //alert(serverUrl);
-    $.post(serverUrl, jsonData, function (response) {
+    //$.post(serverUrl, jsonData, function (response) {
         // Response div goes here.
-        $(idWhereNeedPut).html(response);
-        //alert(response);
+    //    alert(111);
+    //    $(idWhereNeedPut).html(response);
+
+    //});
+
+    $.ajax({
+        type: "POST",
+        url: serverUrl,
+        data: jsonData,
+        success: function(msg){
+            $(idWhereNeedPut).html(msg);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
     });
 }
 
@@ -215,12 +228,47 @@ function changeFunc() {
     serverGetFunc(serverUrl, "#goodsList");
 }
 
-function showAllFunc() {
+function confirmDeleteFunc() {
+    var json_create = {};
+
+    json_create.id_num = $("#inputId").val();
+    
+    var serverUrl = serverPath + "/looking_goods_system/others/delete.php";
+    serverPostFunc(serverUrl, json_create, "#goodsList");
+}
+
+function confirmChangeFunc() {
+    var json_create = {};
+    json_create.type = "POST";
+    json_create.title = $("#inputTitle").val();
+    json_create.description = $("#inputDescription").val();
+    json_create.url_image = $("#inputImageUrl").val();
+    json_create.cost = $("#inputCost").val();
+    json_create.id_num = $("#inputIdnum").val();
+
+    var serverUrl = serverPath + "/looking_goods_system/others/change.php";
+    serverPostFunc(serverUrl, json_create, "#goodsList");
+}
+
+function confirmCreateFunc() {
+    var json_create = {};
+    json_create.type = "POST";
+    json_create.title = $("#inputTitle").val();
+    json_create.description = $("#inputDescription").val();
+    json_create.url_image = $("#inputImageUrl").val();
+    json_create.cost = $("#inputCost").val();
+    json_create.id_num = $("#inputIdnum").val();
+
+    var serverUrl = serverPath + "/looking_goods_system/others/create.php";
+    serverPostFunc(serverUrl, json_create, "#goodsList");
+}
+
+function showAllFunc(need_count) {
     showAllControlButton();
     $("#showAllButton").hide();
 
     var json_create = {};
-    json_create.num = 100;
+    json_create.num = need_count;
     //var json = JSON.stringify(json_create);
 
     var serverUrl = serverPath + "/looking_goods_system/main_loader.php";
@@ -229,7 +277,7 @@ function showAllFunc() {
 
 window.onload = function () {
     showAllControlButton();
-    showAllFunc();
+    showAllFunc(100);
 };
 
 

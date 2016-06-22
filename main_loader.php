@@ -1,4 +1,6 @@
 <?php
+echo $_SERVER['REQUEST_METHOD'];
+
 $num = $_POST['num'];
 
 $num_under = $num - 100;
@@ -21,12 +23,15 @@ $sql = 'SELECT id, id_num, cost, title, url_image, description FROM goods WHERE 
 
 mysql_select_db('goods_data');
 $retval = mysql_query( $sql, $conn );
+
+
+
 if(! $retval )
 {
     die('Could not get data: ' . mysql_error());
 }
 
-mysql_close($conn);
+
 
 //function select() {
 //    echo "The select function is called.";
@@ -46,38 +51,46 @@ while($row = mysql_fetch_array($retval, MYSQL_ASSOC))
 {
     if ($counter % 4 == 0)
     {
+        echo "</div>";
         echo "<div class='row'>";
     }
 
-    echo "<div class='col-md-2' style='margin-top: 50px'>
+    echo "<div class='col-md-2'>
                 <img src='{$row['url_image']}'
                      class='img-responsive'>
                 <h2>{$row['title']}</h2>
                 <p>num: {$row['id_num']}</p>
                 <p>description: {$row['description']}</p>
                 <p>cost: {$row['cost']}</p>
-            </div></div>";
-
-    if ($counter % 4 == 0)
-    {
-        echo "</div>";
-    }
+            </div>";
 
     $counter ++;
 }
 
 echo "</div></div>";
 
-exit;
+$result = mysql_query("SELECT count(*) from goods;");
+$need_pages =  mysql_result($result, 0) / 100;
 
-?>
+$page_current = $num / 100;
 
-<div id="page-selection"></div>
+echo "<div id=\"page-selection\"></div>
+<script type=\"text/javascript\" src=\"http://localhost/looking_goods_system/resources/js/main_page.js\"></script>
 <script>
     // init bootpag
     $('#page-selection').bootpag({
-        total: 10
-    }).on("page", function (event, /* page number here */ num) {
-        $("#content").html("Insert content"); // some ajax content loading...
+        total: $need_pages,
+        page: $page_current,
+        maxVisible: 15
+        
+    }).on(\"page\", function (event, num) {
+    
+        showAllFunc(num * 100);
     });
-</script>
+</script>";
+
+mysql_close($conn);
+
+?>
+
+

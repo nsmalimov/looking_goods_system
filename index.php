@@ -40,7 +40,7 @@
                 <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary" id="changeButton"
                    onclick="changeFunc()">Редактировать</a>
                 <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary" id="showAllButton"
-                   onclick="showAllFunc()">Список</a>
+                   onclick="showAllFunc(100)">Список</a>
                 <div id="goodsList"></div>
             </div>
         </div>
