@@ -1,3 +1,10 @@
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// …
+}
+
+?>
+
 <div class="row" id="createChanelModal">
     <div class="col-md-6">
         <div class="form-group row">
@@ -25,3 +32,4 @@
         <a type="button" class="btn btn-primary" id="createChanelButton" onclick="createChanel()">Готово</a>
     </div>
 </div>
+
