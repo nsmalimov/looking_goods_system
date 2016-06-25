@@ -5,28 +5,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $id_num = $_POST['id_num'];
 
-    $dbhost = 'localhost:3306';
-    $dbuser = 'root';
-    $dbpass = 've;br';
-    $conn = mysql_connect($dbhost, $dbuser);
+    include "/data_workers/settings.php";
 
-    if (!$conn) {
-        die('Could not connect: ' . mysql_error());
+    include "/data_workers/chunk_finder.php";
+
+    $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
+
+    $memcache = new Memcache;
+    $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
+
+    if ($mysqli->connect_errno) {
+        printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
+        exit();
     }
 
-    $sql = 'DELETE FROM goods WHERE id_num = ' . $id_num;
+    $sql = 'DELETE FROM goods FORCE INDEX (id) WHERE id = ' . $id_num;
 
-    mysql_select_db('goods_data');
-    $retval = mysql_query($sql, $conn);
+    $result = $mysqli->query($sql);
 
-    if (!$retval) {
-        die('Could not delete data: ' . mysql_error());
+    if (!$result) {
+        die('Could not delete data: ' . $mysqli->error);
     }
 
     echo "<script>alert('done');</script>";
 
-    mysql_close($conn);
+    $memcache->close();
 
+    $mysqli->close();
 }
 ?>
 

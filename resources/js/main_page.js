@@ -271,12 +271,13 @@ function selectByIdNum() {
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
 
-function showAllFunc(need_count) {
+function showAllFunc(need_count, type) {
     showAllControlButton();
     $("#showAllButton").hide();
 
     var json_create = {};
     json_create.num = need_count;
+    json_create.sort_type = type;
     //var json = JSON.stringify(json_create);
 
     var serverUrl = serverPath + "/looking_goods_system/main_loader.php";
@@ -285,9 +286,15 @@ function showAllFunc(need_count) {
 
 window.onload = function () {
     showAllControlButton();
-    showAllFunc(100);
-};
+    showAllFunc(100, "Id (ascending)");
 
+    $(".dropdown-menu li a").click(function () {
+        var selText = $(this).text();
+        $(this).parents('.btn-group').find('.dropdown-toggle').html(selText + ' <span class="caret"></span>');
+        $("#sort_type").text(selText);
+        showAllFunc(parseInt($("#page_num").text()) * 100, $("#sort_type").text());
+    });
+};
 
 function log() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));

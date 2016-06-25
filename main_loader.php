@@ -6,20 +6,42 @@ $memcache->connect('localhost', 8000) or exit("Невозможно подклю
 $count = intval($memcache->get("count"));
 
 $num = $_POST['num'];
+$sort_type = $_POST['sort_type'];
+
+echo $sort_type . "\n";
+
+switch ($sort_type) {
+    case "Id (ascending)":
+        $sort_type = "ids_sorted_id_";
+        break;
+    case "Id (descending)":
+        $sort_type = "ids_reversed_id_";
+        break;
+    case "Cost (ascending)":
+        $sort_type = "ids_sorted_cost_";
+        break;
+    case "Cost (descending)":
+        $sort_type = "ids_reversed_cost_";
+        break;
+    default:
+        break;
+}
+
+echo $sort_type . "\n";
 
 $need_pages =  $count / 100;
 
 $page_current = $num / 100;
 
-$ids_need_arr = $memcache->get("ids_sorted_id_" . $num);
+$ids_need_arr = $memcache->get($sort_type . $num);
 
 $counter = 0;
 
 echo "<div class='section'><div class='container'>";
 
-for ($i=0;$i<count($ids_need_arr);$i++)
+foreach ($ids_need_arr as $i)
 {
-    $row = $memcache->get($ids_need_arr[$i]);
+    $row = $memcache->get($i);
 
     if ($counter % 4 == 0)
     {
@@ -31,7 +53,7 @@ for ($i=0;$i<count($ids_need_arr);$i++)
                 <img src='{$row['url_image']}'
                      class='img-responsive'>
                 <h2>{$row['title']}</h2>
-                <p>num: {$ids_need_arr[$i]}</p>
+                <p>num: {$i}</p>
                 <p>description: {$row['description']}</p>
                 <p>cost: {$row['cost']}</p>
             </div>";
@@ -53,9 +75,10 @@ echo "<div id=\"page-selection\"></div>
 
     }).on(\"page\", function (event, num) {
 
-        showAllFunc(num * 100);
+        showAllFunc(num * 100, $('#sort_type').text());
     });
-</script>";
+</script>
+<p id=\"page_num\" style=\"visibility: hidden\">" . $page_current . "</p>";
 
 ?>
 

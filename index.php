@@ -33,20 +33,42 @@
 
         <div class="row">
             <div class="col-md-12">
-                <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary" id="createButton"
+                <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary"
+                   id="createButton"
                    onclick="createFunc()">Создать</a>
-                <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary" id="deleteButton"
+                <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary"
+                   id="deleteButton"
                    onclick="deleteFunc()">Удалить</a>
-                <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary" id="changeButton"
+                <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary"
+                   id="changeButton"
                    onclick="changeFunc()">Редактировать</a>
-                <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary" id="showAllButton"
-                   onclick="showAllFunc(100)">Список</a>
-                <div id="goodsList"></div>
+                <a type="button" style="margin-bottom: 40px; margin-right: 30px" class="btn btn-primary"
+                   id="showAllButton"
+                   onclick="showAllFunc(100, 'Id (ascending)')">Список</a>
+                <div>
+                    <div class="btn-group">
+                        <a class="btn dropdown-toggle btn-select2" data-toggle="dropdown" href="#">Sorting <span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a>Id (ascending)</a></li>
+                            <li><a>Id (descending)</a></li>
+                            <li><a>Cost (ascending)</a></li>
+                            <li><a>Cost (descending)</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="container" style="margin-top: 50px;">
+
+                    <div id="goodsList"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 </body>
+
+<p id="sort_type" style="visibility: hidden">Id (ascending)</p>
 
 </html>

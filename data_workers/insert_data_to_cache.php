@@ -60,7 +60,7 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
     $num = 0;
 
     $first = 0;
-    for ($i = 100; $i < $count + 100; $i += 100) {
+    for ($i = 100; $i <= $count; $i += 100) {
         if ($num % 1000 == 0 and $num != 0)
             echo $num . "\n";
 
