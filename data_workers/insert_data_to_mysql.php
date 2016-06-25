@@ -7,12 +7,12 @@ $json_a = json_decode($data, true);
 
 $url_image = "http://95.213.237.66/media/waffle-iron.jpg";
 
-$conn = mysql_connect($mysql_dbhost, $mysql_dbuser);
-if (!$conn) {
-    die('Could not connect to mysql: ' . mysql_error());
-}
+$mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
 
-mysql_select_db($mysql_dbname);
+if ($mysqli->connect_errno) {
+    printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
+    exit();
+}
 
 $count = 0;
 
@@ -31,17 +31,18 @@ while ($count != 1000000) {
             "VALUES " .
             "('$count', '$cost','$title','$url_image','$description')";
 
-        mysql_query($sql, $conn);
+        $mysqli->query($sql);
 
         if ($count == 1000000)
             break;
         
         $count ++;
     }
+
     if ($count == 1000000)
         break;
 }
 
-mysql_close($conn);
+$mysqli->close();
 
 ?>

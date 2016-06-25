@@ -13,8 +13,6 @@ $page_current = $num / 100;
 
 $ids_need_arr = $memcache->get("ids_sorted_id_" . $num);
 
-$ids_need_arr = explode(",", $ids_need_arr);
-
 $counter = 0;
 
 echo "<div class='section'><div class='container'>";
@@ -22,9 +20,6 @@ echo "<div class='section'><div class='container'>";
 for ($i=0;$i<count($ids_need_arr);$i++)
 {
     $row = $memcache->get($ids_need_arr[$i]);
-    $row = str_replace("'", "\"", $row);
-
-    $row = json_decode($row);
 
     if ($counter % 4 == 0)
     {
@@ -33,12 +28,12 @@ for ($i=0;$i<count($ids_need_arr);$i++)
     }
 
     echo "<div class='col-md-2'>
-                <img src='{$row->{'url_image'}}'
+                <img src='{$row['url_image']}'
                      class='img-responsive'>
-                <h2>{$row->{'title'}}</h2>
+                <h2>{$row['title']}</h2>
                 <p>num: {$ids_need_arr[$i]}</p>
-                <p>description: {$row->{'description'}}</p>
-                <p>cost: {$row->{'cost'}}</p>
+                <p>description: {$row['description']}</p>
+                <p>cost: {$row['cost']}</p>
             </div>";
 
     $counter ++;
