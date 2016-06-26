@@ -1,10 +1,9 @@
-
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     include "../data_workers/settings.php";
 
-    include "../data_workers/chunk/chunk_delete.php";
+    include "../data_workers/chunk/chunk_create.php";
 
     $title = $_POST['title'];
     $description = $_POST['description'];
@@ -14,38 +13,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
 
-    $memcache = new Memcache;
-    $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
-
     if ($mysqli->connect_errno) {
         printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
         exit();
     }
 
-    $sql = "INSERT INTO goods ".
-        "(id,cost,title,url_image,description)".
-        "VALUES ".
-        "('$id','$cost','$title','$url_image','$description')";
+    $memcache = new Memcache;
+    $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
 
+    $sql = 'select id FROM goods WHERE id = ' . $id;
     $result = $mysqli->query($sql);
 
-    if (!$result) {
-        die('Could not create data: ' . $mysqli->error);
+    if ($result->fetch_array(MYSQL_NUM)[0] != null) {
+        echo "<script>alert('id exist');</script>";
+    } else {
+
+        $sql = "INSERT INTO goods " .
+            "(id,cost,title,url_image,description)" .
+            "VALUES " .
+            "('$id','$cost','$title','$url_image','$description')";
+
+        $result = $mysqli->query($sql);
+
+        if (!$result) {
+            die('Could not create data: ' . $mysqli->error);
+        }
+
+        $to_insert = array("cost" => $cost, "description" => $description, "title" => $title,
+            "url_image" => $url_image);
+
+        $memcache->set($id, $to_insert, false);
+
+        $memcache->set("count", $memcache->set("count", ceil(($memcache->get("count") + 1) / 100) * 100));
+
+        update_chunk_create($memcache, $id_num, $cost);
+
+        echo "<script>alert('done');</script>";
     }
 
-    $to_insert = array("cost" => $cost, "description" => $description, "title" => $title,
-        "url_image" => $url_image);
-
-    $memcache->set($id, $to_insert, false);
-
-    $memcache->set("count", $memcache->set("count", ceil(($memcache->get("count") + 1)/100)*100));
-
-    update_chunk($memcache, $id_num, $cost);
-
-    echo "<script>alert('done');</script>";
 
     $memcache->close();
-
     $mysqli->close();
 }
 
@@ -57,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h3>Создание</h3>
         <h3></h3>
         <h3></h3>
-        
+
         <div class="form-group row">
             <div class="col-sm-12">
                 <input class="form-control" id="inputIdNum" type="number" placeholder="Id">

@@ -2,7 +2,11 @@
 
 include "settings.php";
 
-ini_set('memory_limit', '600M');
+define('MYSQL_BOTH', MYSQLI_BOTH);
+define('MYSQL_NUM', MYSQLI_NUM);
+define('MYSQL_ASSOC', MYSQLI_ASSOC);
+
+ini_set('memory_limit', '750M');
 
 $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
 
@@ -66,7 +70,7 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
 
         $sliced_arr = array();
 
-        for ($j = $first; $j < $first + 100; $j ++) {
+        for ($j = $first; $j < $first + 100; $j++) {
 
             array_push($sliced_arr, $arr_id[$j]);
         }
@@ -115,7 +119,7 @@ function setOtherVars($mysqli, $memcache)
 {
     $count = getCountInBase($mysqli);
 
-    $memcache->set("count", ceil($count/100)*100);
+    $memcache->set("count", ceil($count / 100) * 100);
 }
 
 //setAllDataFromSQL($mysqli, $memcache);

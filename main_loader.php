@@ -1,9 +1,12 @@
 <?php
 
+include "./data_workers/settings.php";
+
 $memcache = new Memcache;
-$memcache->connect('localhost', 8000) or exit("Невозможно подключиться к серверу Memcached");
+$memcache->connect($memcache_host, $memcache_port) or exit("Невозможно подключиться к серверу Memcached");
 
 $count = intval($memcache->get("count"));
+
 
 $num = $_POST['num'];
 $sort_type = $_POST['sort_type'];
@@ -29,7 +32,7 @@ switch ($sort_type) {
 
 //echo $sort_type . "\n";
 
-$need_pages =  $count / 100;
+$need_pages = $count / 100;
 
 $page_current = $num / 100;
 
@@ -39,15 +42,13 @@ $counter = 0;
 
 echo "<div class='section'><div class='container'>";
 
-foreach ($ids_need_arr as $i)
-{
+foreach ($ids_need_arr as $i) {
     $row = $memcache->get($i);
-    
+
     if ($row == null)
         continue;
 
-    if ($counter % 4 == 0)
-    {
+    if ($counter % 4 == 0) {
         echo "</div>";
         echo "<div class='row'>";
     }
@@ -61,7 +62,7 @@ foreach ($ids_need_arr as $i)
                 <p>cost: {$row['cost']}</p>
             </div>";
 
-    $counter ++;
+    $counter++;
 }
 
 $memcache->close();

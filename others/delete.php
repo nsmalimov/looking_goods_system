@@ -19,21 +19,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $sql = 'DELETE FROM goods WHERE id = ' . $id_num;
-
+    $sql = 'select id FROM goods WHERE id = ' . $id_num;
     $result = $mysqli->query($sql);
 
-    if (!$result) {
-        die('Could not delete data: ' . $mysqli->error);
+    if ($result->fetch_array(MYSQL_NUM)[0] == null) {
+        echo "<script>alert('id not exist');</script>";
     }
+    else {
+        $sql = 'DELETE FROM goods WHERE id = ' . $id_num;
 
-    update_chunk_delete($memcache, $id_num);
+        $result = $mysqli->query($sql);
 
-    $memcache->delete($id_num);
-    
-    $memcache->set("count", ceil(($memcache->get("count") - 1)/100)*100);
+        if (!$result) {
+            die('Could not delete data: ' . $mysqli->error);
+        }
 
-    echo "<script>alert('done');</script>";
+        update_chunk_delete($memcache, $id_num);
+
+        $memcache->delete($id_num);
+
+        $memcache->set("count", ceil(($memcache->get("count") - 1) / 100) * 100);
+
+        echo "<script>alert('done');</script>";
+    }
 
     $memcache->close();
 

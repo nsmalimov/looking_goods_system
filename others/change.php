@@ -10,16 +10,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST["id_num"];
             $values = $memcache->get($id);
 
-            $description = preg_replace('/[\r\n]+/', "", $values['description']);
+            if ($values == null)
+            {
+                echo "<script>alert('id not exist');</script>";
+            }
+            else {
 
-            echo "<script>
-             $('#inputIdNumOriginal').val('{$id}');
-             $('#inputIdNumNeedSet').val('{$id}');
-             $('#inputTitle').val('{$values['title']}');
-             $('#inputImageUrl').val('{$values['url_image']}');
-             $('#inputDescription').val('{$description}');
-             $('#inputCost').val('{$values['cost']}');
+                $description = preg_replace('/[\r\n]+/', "", $values['description']);
+
+                echo "<script>
+                $('#inputIdNumOriginal').val('{$id}');
+                $('#inputIdNumNeedSet').val('{$id}');
+                $('#inputTitle').val('{$values['title']}');
+                $('#inputImageUrl').val('{$values['url_image']}');
+                $('#inputDescription').val('{$description}');
+                $('#inputCost').val('{$values['cost']}');
             </script>";
+            }
             break;
 
         case "change":
@@ -47,6 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $result = $mysqli->query($sql);
 
+            if (!$result) {
+                die('Could not change data: ' . $mysqli->error);
+            }
+
             $new_arr = array("cost" => $cost, "description" => $description, "title" => $title,
                 "url_image" => $url_image);
 
@@ -58,10 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             update_chunk_create($memcache, $id_need_set, $cost);
 
             unset($new_arr);
-
-            if (!$result) {
-                die('Could not delete data: ' . $mysqli->error);
-            }
 
             echo "<script>alert('done');</script>";
 

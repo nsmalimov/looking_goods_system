@@ -26,13 +26,13 @@ function update_chunk_delete($memcache, $id_num)
                 unset($arr1[$find_num1]);
                 $first_need = False;
                 $memcache->replace("ids_sorted_id_" . $i, $arr1);
-                
+
                 $rev_i = $count - $i + 100;
-                
+
                 $arr_temp = $memcache->get("ids_reversed_id_" . $rev_i);
                 $find_num_new = array_search($id_num, $arr_temp);
                 unset($arr_temp[$find_num_new]);
-                
+
                 $memcache->replace("ids_reversed_id_" . $rev_i, $arr_temp);
 
                 unset($arr_temp);
@@ -55,7 +55,7 @@ function update_chunk_delete($memcache, $id_num)
                 $arr_temp = $memcache->get("ids_reversed_id_" . $rev_i);
                 $find_num_new = array_search($id_num, $arr_temp);
                 unset($arr_temp[$find_num_new]);
-                
+
                 $memcache->replace("ids_reversed_cost_" . $rev_i, $arr_temp);
 
                 unset($arr_temp);

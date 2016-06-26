@@ -15,6 +15,8 @@ else {
     serverPath = serverProtocolName + "//" + serverHostName;
 }
 
+var append_path = "/looking_goods_system";
+
 function serverPostFunc(serverUrl, jsonData, idWhereNeedPut) {
     $.ajax({
         type: "POST",
@@ -51,7 +53,7 @@ function createFunc() {
     $("#createButton").hide();
     $("#drop_down_container").hide();
 
-    var serverUrl = serverPath + "/looking_goods_system/others/create.php";
+    var serverUrl = serverPath + append_path + "/others/create.php";
 
     serverGetFunc(serverUrl, "#goodsList")
 }
@@ -61,7 +63,7 @@ function deleteFunc() {
     $("#deleteButton").hide();
     $("#drop_down_container").hide();
 
-    var serverUrl = serverPath + "/looking_goods_system/others/delete.php";
+    var serverUrl = serverPath + append_path + "/others/delete.php";
 
     serverGetFunc(serverUrl, "#goodsList");
 }
@@ -71,7 +73,7 @@ function changeFunc() {
     $("#changeButton").hide();
     $("#drop_down_container").hide();
 
-    var serverUrl = serverPath + "/looking_goods_system/others/change.php";
+    var serverUrl = serverPath + append_path + "/others/change.php";
     serverGetFunc(serverUrl, "#goodsList");
 }
 
@@ -80,12 +82,13 @@ function confirmDeleteFunc() {
 
     json_create.id_num = $("#inputId").val();
 
-    var serverUrl = serverPath + "/looking_goods_system/others/delete.php";
+    var serverUrl = serverPath + append_path + "/others/delete.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
 
 function confirmChangeFunc() {
     var json_create = {};
+
     json_create.title = $("#inputTitle").val();
     json_create.description = $("#inputDescription").val();
     json_create.url_image = $("#inputImageUrl").val();
@@ -94,7 +97,12 @@ function confirmChangeFunc() {
     json_create.id_num_original = $("#inputIdNumOriginal").val();
     json_create.id_num_need_set = $("#inputIdNumNeedSet").val();
 
-    var serverUrl = serverPath + "/looking_goods_system/others/change.php";
+    if (json_create.id_num_original.length == 0)
+    {
+        return;
+    }
+
+    var serverUrl = serverPath + append_path + "/others/change.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
 
@@ -104,8 +112,9 @@ function confirmCreateFunc() {
     json_create.description = $("#inputDescription").val();
     json_create.url_image = $("#inputImageUrl").val();
     json_create.cost = $("#inputCost").val();
+    json_create.id_num = $("#inputIdNum").val();
 
-    var serverUrl = serverPath + "/looking_goods_system/others/create.php";
+    var serverUrl = serverPath + append_path + "/others/create.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
 
@@ -114,7 +123,7 @@ function selectByIdNum() {
     json_create.id_num = $("#inputIdNumOriginal").val();
     json_create.command = "select";
 
-    var serverUrl = serverPath + "/looking_goods_system/others/change.php";
+    var serverUrl = serverPath + append_path + "/others/change.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
 
@@ -129,7 +138,7 @@ function showAllFunc(need_count, type) {
     json_create.num = need_count;
     json_create.sort_type = type;
 
-    var serverUrl = serverPath + "/looking_goods_system/main_loader.php";
+    var serverUrl = serverPath + append_path + "/main_loader.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
 
