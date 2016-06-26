@@ -64,15 +64,17 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
     $num = 0;
 
     $first = 0;
-    for ($i = 100; $i <= $count; $i += 100) {
+    for ($i = 100; $i <= ceil($count/100)*100; $i += 100) {
         if ($num % 1000 == 0 and $num != 0)
             echo $num . "\n";
 
         $sliced_arr = array();
 
         for ($j = $first; $j < $first + 100; $j++) {
-
-            array_push($sliced_arr, $arr_id[$j]);
+            if (array_key_exists($j, $arr_id))
+                if ($arr_id[$j] != null)
+                    
+                    array_push($sliced_arr, $arr_id[$j]);
         }
 
         $memcache->set("ids_" . $type . "_" . $col_name . "_" . $i, $sliced_arr);
@@ -86,7 +88,6 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
 
 function setArraysFromSql($mysqli, $memcache)
 {
-
     $count = getCountInBase($mysqli);
 
     put_sorted_array($mysqli, $memcache, "id", "sorted", $count);
@@ -112,7 +113,7 @@ function getCountInBase($mysqli)
 
     $result_count->free();
 
-    return $row[0];
+    return intval($row[0]);
 }
 
 function setOtherVars($mysqli, $memcache)
@@ -128,6 +129,9 @@ setArraysFromSql($mysqli, $memcache);
 
 setOtherVars($mysqli, $memcache);
 
+//print_r(gettype($memcache->get("13")['cost']));
+
+//print_r($memcache->get("ids_reversed_cost_100"));
 $memcache->close();
 
 $mysqli->close();

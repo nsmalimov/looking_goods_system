@@ -1,7 +1,7 @@
 <?php
 
 //$memcache = new Memcache;
-//$memcache->connect("localhost", 8000) or exit("Could not connect to Memcached");
+//$memcache->connect("localhost", 11211) or exit("Could not connect to Memcached");
 
 // ids_sorted_id
 // ids_reversed_id
@@ -11,68 +11,86 @@
 
 function update_chunk_delete($memcache, $id_num)
 {
-    $count = $memcache->get("count");
-
-    $first_need = True;
-    $second_need = True;
+    $count = intval($memcache->get("count"));
+    
+    $ids_sorted_id_need = True;
+    $ids_reversed_id_need = True;
+    $ids_sorted_cost_need = True;
+    $ids_reversed_cost_need = True;
 
     for ($i = 100; $i <= $count; $i += 100) {
+        if ($ids_sorted_id_need) {
+            $arr = $memcache->get("ids_sorted_id_" . $i);
+            $find_num = array_search($id_num, $arr);
+            
+            //echo gettype($find_num) . "\n";
 
-        if ($first_need) {
-            $arr1 = $memcache->get("ids_sorted_id_" . $i);
-            $find_num1 = array_search($id_num, $arr1);
+            if (!($find_num === False)) {
 
-            if (!($find_num1 === False)) {
-                unset($arr1[$find_num1]);
-                $first_need = False;
-                $memcache->replace("ids_sorted_id_" . $i, $arr1);
-
-                $rev_i = $count - $i + 100;
-
-                $arr_temp = $memcache->get("ids_reversed_id_" . $rev_i);
-                $find_num_new = array_search($id_num, $arr_temp);
-                unset($arr_temp[$find_num_new]);
-
-                $memcache->replace("ids_reversed_id_" . $rev_i, $arr_temp);
-
-                unset($arr_temp);
+                //echo $i . " id1 \n";
+                unset($arr[$find_num]);
+                $memcache->replace("ids_sorted_id_" . $i, $arr);
+                $ids_sorted_id_need = False;
             }
-
-            unset($arr1);
+            
+            unset($arr);
         }
 
-        if ($second_need) {
-            $arr2 = $memcache->get("ids_sorted_cost_" . $i);
-            $find_num2 = array_search($id_num, $arr2);
+        if ($ids_reversed_id_need) {
+            $arr = $memcache->get("ids_reversed_id_" . $i);
+            $find_num = array_search($id_num, $arr);
 
-            if (!($find_num2 === False)) {
-                unset($arr2[$find_num2]);
-                $second_need = False;
-                $memcache->replace("ids_sorted_cost_" . $i, $arr2);
-
-                $rev_i = $count - $i + 100;
-
-                $arr_temp = $memcache->get("ids_reversed_id_" . $rev_i);
-                $find_num_new = array_search($id_num, $arr_temp);
-                unset($arr_temp[$find_num_new]);
-
-                $memcache->replace("ids_reversed_cost_" . $rev_i, $arr_temp);
-
-                unset($arr_temp);
+            if (!($find_num === False)) {
+                
+                //echo $i . " id2 \n";
+                unset($arr[$find_num]);
+                $memcache->replace("ids_reversed_id_" . $i, $arr);
+                $ids_reversed_id_need = False;
             }
-
-            unset($arr2);
+            
+            unset($arr);
         }
 
-        if ($first_need == False and $second_need) {
+        if ($ids_sorted_cost_need) {
+            $arr = $memcache->get("ids_sorted_cost_" . $i);
+            $find_num = array_search($id_num, $arr);
+
+            if (!($find_num === False)) {
+
+                //echo $i . " cost1 \n";
+                unset($arr[$find_num]);
+                $memcache->replace("ids_sorted_cost_" . $i, $arr);
+                $ids_sorted_cost_need = False;
+            }
+            
+            unset($arr);
+        }
+
+        if ($ids_reversed_cost_need) {
+            $arr = $memcache->get("ids_reversed_cost_" . $i);
+            $find_num = array_search($id_num, $arr);
+
+            if (!($find_num === False)) {
+
+                ///echo $i . " cost2 \n";
+                unset($arr[$find_num]);
+                //echo $find_num . "\n";
+                print_r($arr);
+                $memcache->replace("ids_reversed_cost_" . $i, $arr);
+                $ids_reversed_cost_need = False;
+            }
+            
+            unset($arr);
+        }
+        
+        if (!$ids_reversed_cost_need and !$ids_reversed_id_need 
+            and !$ids_sorted_id_need and !$ids_sorted_cost_need)
+        {
+            //echo "break" . "\n";
             break;
         }
     }
 }
-
-//update_chunk_delete($memcache, "1");
-
-//print_r($memcache->get("ids_sorted_id_100"));
 
 //$memcache->close();
 

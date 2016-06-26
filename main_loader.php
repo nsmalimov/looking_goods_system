@@ -41,11 +41,11 @@ $counter = 0;
 
 echo "<div class='section'><div class='container'>";
 
-foreach ($ids_need_arr as $i) {
-    $row = $memcache->get($i);
+foreach ($ids_need_arr as $key => $value) {
+    $row = $memcache->get($value);
 
-    if ($row == null)
-        continue;
+    //if ($row == null)
+    //    continue;
 
     if ($counter % 4 == 0) {
         echo "</div>";
@@ -56,7 +56,7 @@ foreach ($ids_need_arr as $i) {
                 <img src='{$row['url_image']}'
                      class='img-responsive'>
                 <h2>{$row['title']}</h2>
-                <p>num: {$i}</p>
+                <p>num: {$value}</p>
                 <p>description: {$row['description']}</p>
                 <p>cost: {$row['cost']}</p>
             </div>";
