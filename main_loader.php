@@ -8,7 +8,7 @@ $count = intval($memcache->get("count"));
 $num = $_POST['num'];
 $sort_type = $_POST['sort_type'];
 
-echo $sort_type . "\n";
+//echo $sort_type . "\n";
 
 switch ($sort_type) {
     case "Id (ascending)":
@@ -27,7 +27,7 @@ switch ($sort_type) {
         break;
 }
 
-echo $sort_type . "\n";
+//echo $sort_type . "\n";
 
 $need_pages =  $count / 100;
 

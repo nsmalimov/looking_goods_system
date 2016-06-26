@@ -246,8 +246,9 @@ function confirmChangeFunc() {
     json_create.description = $("#inputDescription").val();
     json_create.url_image = $("#inputImageUrl").val();
     json_create.cost = $("#inputCost").val();
-    json_create.id_num = $("#inputIdNum").val();
     json_create.command = "change";
+    json_create.id_num_original = $("#inputIdNumOriginal").val();
+    json_create.id_num_need_set = $("#inputIdNumNeedSet").val();
 
     var serverUrl = serverPath + "/looking_goods_system/others/change.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
@@ -259,7 +260,6 @@ function confirmCreateFunc() {
     json_create.description = $("#inputDescription").val();
     json_create.url_image = $("#inputImageUrl").val();
     json_create.cost = $("#inputCost").val();
-    json_create.id_num = $("#inputIdNum").val();
 
     var serverUrl = serverPath + "/looking_goods_system/others/create.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
@@ -267,7 +267,7 @@ function confirmCreateFunc() {
 
 function selectByIdNum() {
     var json_create = {};
-    json_create.id_num = ("#inputIdNum").val();
+    json_create.id_num = $("#inputIdNumOriginal").val();
     json_create.command = "select";
     
     var serverUrl = serverPath + "/looking_goods_system/others/change.php";

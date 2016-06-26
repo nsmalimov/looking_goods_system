@@ -1,18 +1,69 @@
-
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    include "../data_workers/settings.php";
+
+    $memcache = new Memcache;
+    $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
+
     switch ($_POST['command']) {
         case "select":
-            echo "i равно 0";
+            $id = $_POST["id_num"];
+            $values = $memcache->get($id);
+
+            $description = preg_replace('/[\r\n]+/', "", $values['description']);
+
+            echo "<script>
+             $('#inputIdNumOriginal').val('{$id}');
+             $('#inputIdNumNeedSet').val('{$id}');
+             $('#inputTitle').val('{$values['title']}');
+             $('#inputImageUrl').val('{$values['url_image']}');
+             $('#inputDescription').val('{$description}');
+             $('#inputCost').val('{$values['cost']}');
+            </script>";
+
+            //echo "i равно 0";
             break;
-        
+
         case "change":
-            echo "i равно 1";
+
+            include "../data_workers/chunk/chunk_change.php";
+            
+            $title = $_POST['title'];
+            $description = $_POST['description'];
+            $url_image = $_POST['url_image'];
+            $cost = $_POST['cost'];
+            $id_original = $_POST['id_num_original'];
+            $id_need_set = $_POST['id_num_need_set'];
+
+            $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
+
+            if ($mysqli->connect_errno) {
+                printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
+                exit();
+            }
+
+            $sql = "UPDATE goods SET id = '{$id_need_set}', title = '{$title}', 
+                    description = '{$description}', cost = '${cost}', url_image = '{$url_image}' 
+                    WHERE id=" . $id_original;
+
+
+            $result = $mysqli->query($sql);
+
+            if (!$result) {
+                die('Could not delete data: ' . $mysqli->error);
+            }
+
+            echo "<script>alert('done');</script>";
+
+            $mysqli->close();
+
             break;
-        
+
         default:
             break;
     }
+
+    $memcache->close();
 }
 
 ?>
@@ -26,11 +77,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-group row">
             <div class="col-sm-12">
-                <input class="form-control" id="inputIdNum" type="number" placeholder="Id">
+                <input class="form-control" id="inputIdNumOriginal" type="number" placeholder="Id">
             </div>
         </div>
 
-        <a type="button" class="btn btn-primary" onclick="selectByIdNum()">Показать</a>
+        <a type="button" class="btn btn-primary" onclick="selectByIdNum()" style="margin-bottom: 30px">Показать</a>
+
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <input class="form-control" id="inputIdNumNeedSet" type="number" placeholder="Id">
+            </div>
+        </div>
 
         <div class="form-group row">
             <div class="col-sm-12">

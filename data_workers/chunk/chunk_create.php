@@ -1,7 +1,7 @@
 <?php
 
-$memcache = new Memcache;
-$memcache->connect("localhost", 8000) or exit("Could not connect to Memcached");
+//$memcache = new Memcache;
+//$memcache->connect("localhost", 8000) or exit("Could not connect to Memcached");
 
 // ids_sorted_id
 // ids_reversed_id
@@ -19,8 +19,6 @@ function update_chunk($memcache, $id_num, $cost)
     for ($i = 100; $i <= $count; $i += 100) {
         if ($first_need) {
             $arr1 = $memcache->get("ids_sorted_id_" . $i);
-            
-            //echo $i . "\n";
             
             if ($i == $count and $id_num > end($arr1)) {
 
@@ -62,7 +60,6 @@ function update_chunk($memcache, $id_num, $cost)
             }
             elseif ($id_num > array_values($arr1)[0] and $id_num <= end($arr1))
             {
-                echo $id_num . "\t" . end($arr1);
                 foreach ($arr1 as $j)
                 {
                     if ($j >= $id_num) {
@@ -75,7 +72,6 @@ function update_chunk($memcache, $id_num, $cost)
                         $rev_i = $count - $i + 100;
                         
                         $arr_temp = $memcache->get("ids_reversed_id_" . $rev_i);
-                        //echo count($arr_temp)-$num_in_arr . "\n";
                         array_splice($arr_temp, count($arr_temp)-$num_in_arr + 1, 0, $inserted);
 
                         $memcache->replace("ids_reversed_id_" . $rev_i, $arr_temp);
@@ -92,10 +88,6 @@ function update_chunk($memcache, $id_num, $cost)
 
         if ($second_need) {
             $arr2 = $memcache->get("ids_sorted_cost_" . $i);
-            
-            //echo $memcache->get(array_values($arr2)[0])['cost'];
-            
-            //echo $memcache->get(array_values($arr2)[0])['cost'] . "\t" . $cost . "\n";
             
             if ($i == $count and $cost > $memcache->get(end($arr2))['cost'])
             {
@@ -114,7 +106,6 @@ function update_chunk($memcache, $id_num, $cost)
             }
             elseif ($cost <= $memcache->get(array_values($arr2)[0])['cost'])
             {
-                echo "111";
                 array_unshift($arr2, $id_num);
                 $memcache->replace("ids_sorted_cost_" . $i, $arr2);
                 
@@ -136,7 +127,6 @@ function update_chunk($memcache, $id_num, $cost)
             elseif ($cost > $memcache->get(array_values($arr2)[0])['cost']
                 and $cost <= $memcache->get(end($arr2))['cost'])
             {
-                echo "222";
                 foreach ($arr2 as $j)
                 {
                     if ($memcache->get($j)['cost'] >= $cost) {
@@ -149,7 +139,7 @@ function update_chunk($memcache, $id_num, $cost)
                         $rev_i = $count - $i + 100;
 
                         $arr_temp = $memcache->get("ids_reversed_cost_" . $rev_i);
-                        echo count($arr_temp)-$num_in_arr . "\n";
+
                         array_splice($arr_temp, count($arr_temp)-$num_in_arr + 1, 0, $inserted);
 
                         $memcache->replace("ids_reversed_cost_" . $rev_i, $arr_temp);
@@ -171,13 +161,8 @@ function update_chunk($memcache, $id_num, $cost)
 }
 
 //pdate_chunk($memcache, "1000000", "1000");
-print_r($memcache->get("ids_sorted_id_1000000"));
+//print_r($memcache->get("ids_reversed_id_100"));
 
-//print_r("0" < "1");
-
-//echo ceil(678/100)*100;
-$memcache->close();
-
-//echo (1==2) == Null;
+//$memcache->close();
 
 ?>

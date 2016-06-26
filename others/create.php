@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $mysqli->query($sql);
 
     if (!$result) {
-        die('Could not delete data: ' . $mysqli->error);
+        die('Could not create data: ' . $mysqli->error);
     }
 
     $to_insert = array("cost" => $cost, "description" => $description, "title" => $title,

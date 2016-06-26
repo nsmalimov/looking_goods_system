@@ -81,6 +81,6 @@ function update_chunk($memcache, $id_num)
 //print_r(0 == False);
 //$memcache->close();
 
-echo (1==2) == Null;
+// (1==2) == Null;
 
 ?>
