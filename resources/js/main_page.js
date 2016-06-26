@@ -205,6 +205,7 @@ function showAllControlButton() {
 function createFunc() {
     showAllControlButton();
     $("#createButton").hide();
+    $("#drop_down_container").hide();
 
     var serverUrl = serverPath + "/looking_goods_system/others/create.php";
 
@@ -214,6 +215,7 @@ function createFunc() {
 function deleteFunc() {
     showAllControlButton();
     $("#deleteButton").hide();
+    $("#drop_down_container").hide();
 
     var serverUrl = serverPath + "/looking_goods_system/others/delete.php";
 
@@ -223,6 +225,7 @@ function deleteFunc() {
 function changeFunc() {
     showAllControlButton();
     $("#changeButton").hide();
+    $("#drop_down_container").hide();
 
     var serverUrl = serverPath + "/looking_goods_system/others/change.php";
     serverGetFunc(serverUrl, "#goodsList");
@@ -274,6 +277,7 @@ function selectByIdNum() {
 function showAllFunc(need_count, type) {
     showAllControlButton();
     $("#showAllButton").hide();
+    $("#drop_down_container").show();
 
     var json_create = {};
     json_create.num = need_count;

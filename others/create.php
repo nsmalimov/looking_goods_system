@@ -1,36 +1,52 @@
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    include "../data_workers/settings.php";
+
+    include "../data_workers/chunk/chunk_delete.php";
+
     $title = $_POST['title'];
     $description = $_POST['description'];
     $url_image = $_POST['url_image'];
     $cost = $_POST['cost'];
-    $id_num = $_POST['id_num'];
+    $id = $_POST['id_num'];
 
-    $dbhost = 'localhost:3306';
-    $dbuser = 'root';
-    $dbpass = 've;br';
-    $conn = mysql_connect($dbhost, $dbuser);
+    $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
 
-    if (!$conn) {
-        die('Could not connect: ' . mysql_error());
+    $memcache = new Memcache;
+    $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
+
+    if ($mysqli->connect_errno) {
+        printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
+        exit();
     }
 
     $sql = "INSERT INTO goods ".
-        "(id_num,cost,title,url_image,description)".
+        "(id,cost,title,url_image,description)".
         "VALUES ".
-        "('$id_num','$cost','$title','$url_image','$description')";
+        "('$id','$cost','$title','$url_image','$description')";
 
-    mysql_select_db('goods_data');
-    $retval = mysql_query($sql, $conn);
+    $result = $mysqli->query($sql);
 
-    if (!$retval) {
-        die('Could not insert data: ' . mysql_error());
+    if (!$result) {
+        die('Could not delete data: ' . $mysqli->error);
     }
+
+    $to_insert = array("cost" => $cost, "description" => $description, "title" => $title,
+        "url_image" => $url_image);
+
+    $memcache->set($id, $to_insert, false);
+
+    $memcache->set("count", $memcache->get("count") + 1);
+
+    update_chunk($memcache, $id_num, $cost);
 
     echo "<script>alert('done');</script>";
 
-    mysql_close($conn);
+    $memcache->close();
+
+    $mysqli->close();
 }
 
 ?>

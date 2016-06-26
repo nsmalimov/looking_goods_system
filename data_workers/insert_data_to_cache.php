@@ -71,6 +71,8 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
             array_push($sliced_arr, $arr_id[$j]);
         }
 
+        var_dump($sliced_arr);
+
         $memcache->set("ids_" . $type . "_" . $col_name . "_" . $i, $sliced_arr);
         $first = $i;
         $num++;
@@ -115,10 +117,10 @@ function setOtherVars($mysqli, $memcache)
 {
     $count = getCountInBase($mysqli);
 
-    $memcache->set("count", $count);
+    $memcache->set("count", ceil($count/100)*100);
 }
 
-setAllDataFromSQL($mysqli, $memcache);
+//setAllDataFromSQL($mysqli, $memcache);
 
 setArraysFromSql($mysqli, $memcache);
 

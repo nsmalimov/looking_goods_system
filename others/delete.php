@@ -5,9 +5,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $id_num = $_POST['id_num'];
 
-    include "/data_workers/settings.php";
+    include "../data_workers/settings.php";
 
-    include "/data_workers/chunk_finder.php";
+    include "../data_workers/chunk/chunk_delete.php";
 
     $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
 
@@ -19,13 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $sql = 'DELETE FROM goods FORCE INDEX (id) WHERE id = ' . $id_num;
+    $sql = 'DELETE FROM goods WHERE id = ' . $id_num;
 
     $result = $mysqli->query($sql);
 
     if (!$result) {
         die('Could not delete data: ' . $mysqli->error);
     }
+
+    update_chunk($memcache, $id_num);
+    
+    $memcache->set("count", $memcache->get("count") - 1);
 
     echo "<script>alert('done');</script>";
 
