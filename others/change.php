@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-group row">
             <div class="col-sm-12">
-                <input class="form-control" type="number" placeholder="Cost" id="inputCost">
+                <input class="form-control" type="text" placeholder="Cost" id="inputCost">
             </div>
         </div>
 

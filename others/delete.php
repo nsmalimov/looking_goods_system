@@ -3,7 +3,7 @@
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $id_num = $_POST['id_num'];
+    $id = $_POST['id_num'];
 
     include "../data_workers/settings.php";
 
@@ -19,14 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $sql = 'select id FROM goods WHERE id = ' . $id_num;
+    $sql = 'select id FROM goods WHERE id = ' . $id;
     $result = $mysqli->query($sql);
 
     if ($result->fetch_array(MYSQL_NUM)[0] == null) {
         echo "<script>alert('id not exist');</script>";
     }
     else {
-        $sql = 'DELETE FROM goods WHERE id = ' . $id_num;
+        $sql = 'DELETE FROM goods WHERE id = ' . $id;
 
         $result = $mysqli->query($sql);
 
@@ -34,9 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die('Could not delete data: ' . $mysqli->error);
         }
 
-        update_chunk_delete($memcache, $id_num);
+        update_chunk_delete($memcache, $id);
 
-        $memcache->delete($id_num);
+        $memcache->delete($id);
 
         $memcache->set("count", ceil(($memcache->get("count") - 1) / 100) * 100);
 

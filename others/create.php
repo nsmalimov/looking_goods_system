@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $memcache->set("count", $memcache->set("count", ceil(($memcache->get("count") + 1) / 100) * 100));
 
-        update_chunk_create($memcache, $id_num, $cost);
+        update_chunk_create($memcache, $id, $cost);
 
         echo "<script>alert('done');</script>";
     }
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-group row">
             <div class="col-sm-12">
-                <input class="form-control" type="number" placeholder="Cost" id="inputCost">
+                <input class="form-control" type="text" placeholder="Cost" id="inputCost">
             </div>
         </div>
 

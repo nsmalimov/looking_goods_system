@@ -7,7 +7,6 @@ $memcache->connect($memcache_host, $memcache_port) or exit("Невозможно
 
 $count = intval($memcache->get("count"));
 
-
 $num = $_POST['num'];
 $sort_type = $_POST['sort_type'];
 

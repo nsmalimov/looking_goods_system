@@ -82,6 +82,12 @@ function confirmDeleteFunc() {
 
     json_create.id_num = $("#inputId").val();
 
+    if (!(Number.isInteger(parseInt(json_create.id_num))))
+    {
+        alert("not digit");
+        return;
+    }
+
     var serverUrl = serverPath + append_path + "/others/delete.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
@@ -92,13 +98,22 @@ function confirmChangeFunc() {
     json_create.title = $("#inputTitle").val();
     json_create.description = $("#inputDescription").val();
     json_create.url_image = $("#inputImageUrl").val();
-    json_create.cost = $("#inputCost").val();
+    json_create.cost = parseFloat($("#inputCost").val());
     json_create.command = "change";
     json_create.id_num_original = $("#inputIdNumOriginal").val();
     json_create.id_num_need_set = $("#inputIdNumNeedSet").val();
 
+    if (isNaN(parseInt(json_create.id_num_original)) ||
+            isNaN(parseInt(json_create.id_num_need_set)) ||
+        isNaN(json_create.cost))
+    {
+        alert("not digit");
+        return;
+    }
+
     if (json_create.id_num_original.length == 0)
     {
+        alert("id is empty");
         return;
     }
 
@@ -111,8 +126,15 @@ function confirmCreateFunc() {
     json_create.title = $("#inputTitle").val();
     json_create.description = $("#inputDescription").val();
     json_create.url_image = $("#inputImageUrl").val();
-    json_create.cost = $("#inputCost").val();
+    json_create.cost = parseFloat($("#inputCost").val());
     json_create.id_num = $("#inputIdNum").val();
+
+    if (isNaN(parseInt(json_create.id_num)) ||
+        isNaN(json_create.cost))
+    {
+        alert("not digit");
+        return;
+    }
 
     var serverUrl = serverPath + append_path + "/others/create.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
@@ -122,6 +144,12 @@ function selectByIdNum() {
     var json_create = {};
     json_create.id_num = $("#inputIdNumOriginal").val();
     json_create.command = "select";
+
+    if (!(Number.isInteger(parseInt(json_create.id_num))))
+    {
+        alert("not digit");
+        return;
+    }
 
     var serverUrl = serverPath + append_path + "/others/change.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
@@ -143,7 +171,8 @@ function showAllFunc(need_count, type) {
 }
 
 window.onload = function () {
-    //alert();
+
+    //alert(isNaN(parseFloat("www")));
     showAllControlButton();
     showAllFunc(100, "Id (ascending)");
 
@@ -158,4 +187,8 @@ window.onload = function () {
 function log() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));
     console.log.apply(console, arguments);
+}
+
+function isFloat(n) {
+    return n === +n && n !== (n|0);
 }
