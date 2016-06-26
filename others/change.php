@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case "change":
 
-            include "../data_workers/chunk/chunk_change.php";
+            include "../data_workers/chunk/chunk_create.php";
             
             $title = $_POST['title'];
             $description = $_POST['description'];
@@ -48,6 +48,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
             $result = $mysqli->query($sql);
+
+            $new_arr = array("cost" => $cost, "description" => $description, "title" => $title,
+                "url_image" => $url_image);
+
+            $memcache->delete($id_original);
+
+            $memcache->set($id_need_set, $new_arr);
+
+            update_chunk($memcache, $id_need_set, $cost);
+
+            unset($new_arr);
 
             if (!$result) {
                 die('Could not delete data: ' . $mysqli->error);
