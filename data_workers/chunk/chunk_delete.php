@@ -9,7 +9,7 @@
 // ids_sorted_cost
 // ids_reversed_cost
 
-function update_chunk($memcache, $id_num)
+function update_chunk_delete($memcache, $id_num)
 {
     $count = $memcache->get("count");
 
@@ -70,7 +70,7 @@ function update_chunk($memcache, $id_num)
     }
 }
 
-//update_chunk($memcache, "1");
+//update_chunk_delete($memcache, "1");
 
 //print_r($memcache->get("ids_sorted_id_100"));
 

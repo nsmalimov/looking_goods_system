@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die('Could not delete data: ' . $mysqli->error);
     }
 
-    update_chunk($memcache, $id_num);
+    update_chunk_delete($memcache, $id_num);
 
     $memcache->delete($id_num);
     
