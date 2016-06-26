@@ -15,57 +15,15 @@ else {
     serverPath = serverProtocolName + "//" + serverHostName;
 }
 
-//
-// function logOutIn()
-// {
-//     if ($("#loginText").text() == "Войти") {
-//         $("#loginPanel").modal('show');
-//         $("#registrationPanel").modal('hide');
-//         $("#reestablishPanel").modal('hide');
-//     }
-//     else
-//     {
-//         //delete cookies
-//         //reload page
-//         location.reload();
-//     }
-// }
-//
-// function reestablishShowPanel()
-// {
-//     $("#loginPanel").modal('hide');
-//     $("#registrationPanel").modal('hide');
-//     $("#reestablishPanel").modal('show');
-// }
-//
-// function registrationShowPanel()
-// {
-//     $("#loginPanel").modal('hide');
-//     $("#registrationPanel").modal('show');
-//     $("#reestablishPanel").modal('hide');
-// }
-//
-
 function serverPostFunc(serverUrl, jsonData, idWhereNeedPut) {
-    //var clickBtnValue = $(this).val();
-    //var ajaxurl = serverUrl,
-    //    data =  {'action': "111"};
-    //alert(serverUrl);
-    //$.post(serverUrl, jsonData, function (response) {
-        // Response div goes here.
-    //    alert(111);
-    //    $(idWhereNeedPut).html(response);
-
-    //});
-
     $.ajax({
         type: "POST",
         url: serverUrl,
         data: jsonData,
-        success: function(msg){
+        success: function (msg) {
             $(idWhereNeedPut).html(msg);
         },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown);
         }
     });
@@ -80,120 +38,6 @@ function serverGetFunc(serverUrl, idWhereNeedPut) {
         }
     });
 }
-
-//
-// function serverChanelWorkerFunc(serverUrl, jsonData) {
-//     $.ajax({
-//         url: serverUrl + "/discussions",
-//         type: 'POST',
-//         data: jsonData,
-//
-//         dataType: 'json',
-//         async: true,
-//
-//         success: function (event) {
-//             switch (event["answer"])
-//             {
-//                 case "ok create":
-//                     updateChanelsList();
-//                     break;
-//             }
-//         },
-//         error: function (xhr, status, error) {
-//             log(error);
-//         }
-//     });
-// }
-//
-// function connectLogin()
-// {
-//     var json_create;
-//     json_create = {};
-//     json_create.email = $("#inputEmailLogin").val();
-//     json_create.password = $("#inputPasswordLogin").val();
-//     json_create.command = "login";
-//     var json = JSON.stringify(json_create);
-//
-//     if (json_create.email.length == 0 || json_create.password.length == 0)
-//     {
-//         alert("Неправильные данные");
-//         return;
-//     }
-//
-//     serverConnectFunc(serverPath, json);
-// }
-//
-// function connectReestablish()
-// {
-//     var json_create;
-//     json_create = {};
-//     json_create.email = $("#inputEmailReestablish").val();
-//     json_create.command = "reestablish";
-//
-//     if (json_create.email.length == 0)
-//     {
-//         alert("Неправильные данные");
-//         return;
-//     }
-//
-//     var json = JSON.stringify(json_create);
-//     serverConnectFunc(serverPath, json);
-// }
-//
-// function connectRegistration()
-// {
-//     var json_create;
-//     json_create = {};
-//     json_create.email = $("#inputEmailRegistration").val();
-//     json_create.username = $("#inputUsernameRegistration").val();
-//
-//     var password1 = $("#inputPasswordRegistration1").val();
-//     var password2 = $("#inputPasswordRegistration2").val();
-//
-//     if (password1 != password2) {
-//         alert("Пароли не совпадают");
-//         return;
-//     }
-//
-//     if (json_create.email.length == 0 || password1.length == 0 || password2.length == 0)
-//     {
-//         alert("Неправильные данные");
-//         return;
-//     }
-//
-//     json_create.password = password1;
-//     json_create.command = "registration";
-//     var json = JSON.stringify(json_create);
-//
-//     serverConnectFunc(serverPath, json);
-// }
-//
-// function createChanelFieldOpen()
-// {
-//     if ($("#userName").text() == "")
-//     {
-//         $("#loginPanel").modal('show');
-//         return;
-//     }
-//
-//     $("#chanelsList").hide();
-//     $("#createChanelModal").show();
-// }
-//
-// function createChanel()
-// {
-//     var json_create;
-//     json_create = {};
-//     json_create.title = $("#inputChanelTitle").val();
-//     json_create.description = $("#inputChanelDescription").val();
-//     json_create.datetime = $("#datetimepicker1").data("DateTimePicker").date();
-//     json_create.command = "create";
-//     json_create.userName = $("#userName");
-//
-//     var json = JSON.stringify(json_create);
-//     serverChanelWorkerFunc(serverPath, json);
-// }
-//
 
 function showAllControlButton() {
     $("#createButton").show();
@@ -235,7 +79,7 @@ function confirmDeleteFunc() {
     var json_create = {};
 
     json_create.id_num = $("#inputId").val();
-    
+
     var serverUrl = serverPath + "/looking_goods_system/others/delete.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
@@ -269,7 +113,7 @@ function selectByIdNum() {
     var json_create = {};
     json_create.id_num = $("#inputIdNumOriginal").val();
     json_create.command = "select";
-    
+
     var serverUrl = serverPath + "/looking_goods_system/others/change.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
@@ -278,17 +122,19 @@ function showAllFunc(need_count, type) {
     showAllControlButton();
     $("#showAllButton").hide();
     $("#drop_down_container").show();
+    //$("#sorting_label").text("Sorting");
+    $(".dropdown-menu li a").parents('.btn-group').find('.dropdown-toggle').html(type + ' <span class="caret"></span>');
 
     var json_create = {};
     json_create.num = need_count;
     json_create.sort_type = type;
-    //var json = JSON.stringify(json_create);
 
     var serverUrl = serverPath + "/looking_goods_system/main_loader.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
 
 window.onload = function () {
+    //alert();
     showAllControlButton();
     showAllFunc(100, "Id (ascending)");
 
@@ -304,9 +150,3 @@ function log() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));
     console.log.apply(console, arguments);
 }
-
-// function updateChanelsList()
-// {
-//     $("#chanelsList").show();
-//     $("#createChanelModal").hide();
-// }

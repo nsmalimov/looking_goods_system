@@ -22,14 +22,12 @@ function update_chunk($memcache, $id_num)
             $arr1 = $memcache->get("ids_sorted_id_" . $i);
             $find_num1 = array_search($id_num, $arr1);
 
-            if ($find_num1 != null) {
+            if (!($find_num1 === False)) {
                 unset($arr1[$find_num1]);
                 $first_need = False;
                 $memcache->replace("ids_sorted_id_" . $i, $arr1);
                 
                 $rev_i = $count - $i + 100;
-
-                //echo $i . " " . $rev_i . " " . $count . "\n";
                 
                 $arr_temp = $memcache->get("ids_reversed_id_" . $rev_i);
                 $find_num_new = array_search($id_num, $arr_temp);
@@ -47,14 +45,12 @@ function update_chunk($memcache, $id_num)
             $arr2 = $memcache->get("ids_sorted_cost_" . $i);
             $find_num2 = array_search($id_num, $arr2);
 
-            if ($find_num2 != null) {
+            if (!($find_num2 === False)) {
                 unset($arr2[$find_num2]);
                 $second_need = False;
                 $memcache->replace("ids_sorted_cost_" . $i, $arr2);
 
                 $rev_i = $count - $i + 100;
-
-                //echo $i . " " . $rev_i . " " . $count . "\n";
 
                 $arr_temp = $memcache->get("ids_reversed_id_" . $rev_i);
                 $find_num_new = array_search($id_num, $arr_temp);
@@ -74,13 +70,10 @@ function update_chunk($memcache, $id_num)
     }
 }
 
-//find_chunk_need_by_id($memcache, "999997");
+//update_chunk($memcache, "1");
 
 //print_r($memcache->get("ids_sorted_id_100"));
 
-//print_r(0 == False);
 //$memcache->close();
-
-// (1==2) == Null;
 
 ?>

@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $memcache->set($id, $to_insert, false);
 
-    $memcache->set("count", $memcache->get("count") + 1);
+    $memcache->set("count", $memcache->set("count", ceil(($memcache->get("count") + 1)/100)*100));
 
     update_chunk($memcache, $id_num, $cost);
 

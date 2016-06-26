@@ -20,8 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              $('#inputDescription').val('{$description}');
              $('#inputCost').val('{$values['cost']}');
             </script>";
-
-            //echo "i равно 0";
             break;
 
         case "change":

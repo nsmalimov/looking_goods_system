@@ -28,8 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     update_chunk($memcache, $id_num);
+
+    $memcache->delete($id_num);
     
-    $memcache->set("count", $memcache->get("count") - 1);
+    $memcache->set("count", ceil(($memcache->get("count") - 1)/100)*100);
 
     echo "<script>alert('done');</script>";
 
@@ -53,4 +55,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <a type='button' class='btn btn-primary' id='createChanelButton' onclick='confirmDeleteFunc()'> Готово</a>
     </div>
-</div>"
+</div>

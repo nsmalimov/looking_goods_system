@@ -42,6 +42,9 @@ echo "<div class='section'><div class='container'>";
 foreach ($ids_need_arr as $i)
 {
     $row = $memcache->get($i);
+    
+    if ($row == null)
+        continue;
 
     if ($counter % 4 == 0)
     {
