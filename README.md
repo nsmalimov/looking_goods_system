@@ -33,6 +33,8 @@
 
 - Apache Bench
 
+При варьировании разных параметров (запросы, потоки) в среднем получаем такой результат:
+
 <p>Requests per second:    211.45 [#/sec] (mean)</p>
 <p>Time per request:       47.293 [ms] (mean)</p>
 <p>Time per request:       4.729 [ms] (mean, across all concurrent requests)</p>
@@ -49,6 +51,4 @@
 <p>Failed transactions:	           0</p>
 
 Результаты аналогичные.
-
-- httperf
 
