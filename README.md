@@ -33,10 +33,10 @@
 
 - Apache Bench
 
-Requests per second:    211.45 [#/sec] (mean)
-Time per request:       47.293 [ms] (mean)
-Time per request:       4.729 [ms] (mean, across all concurrent requests)
-Transfer rate:          588.70 [Kbytes/sec] received
+<p>Requests per second:    211.45 [#/sec] (mean)</p>
+<p>Time per request:       47.293 [ms] (mean)</p>
+<p>Time per request:       4.729 [ms] (mean, across all concurrent requests)</p>
+<p>Transfer rate:          588.70 [Kbytes/sec] received</p>
 
 С учётом, что считается вся выдача сервера, то 211/5=42 - следовательно в среднем сервер выдерживает до 40 запросов на выдачу списка первых 100 товаров в секунду. С остальными партициями ситуация будет аналогичной, так как в запросе не задействуется SQL, только кеш.
 
