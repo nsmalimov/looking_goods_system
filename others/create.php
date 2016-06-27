@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cost = $_POST['cost'];
     $id = $_POST['id_num'];
 
-    $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
+    $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, $mysql_dbpass, $mysql_dbname);
 
     if ($mysqli->connect_errno) {
         printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
@@ -43,10 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "url_image" => $url_image);
 
         $memcache->set($id, $to_insert, false);
-
-        //$count = intval($memcache->get("count"));
-
-        //$memcache->replace("count",  ceil(($count + 1) / 100) * 100);
 
         update_chunk_create($memcache, $id, $cost);
 

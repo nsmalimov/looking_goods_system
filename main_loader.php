@@ -10,8 +10,6 @@ $count = intval($memcache->get("count"));
 $num = $_POST['num'];
 $sort_type = $_POST['sort_type'];
 
-//echo $sort_type . "\n";
-
 switch ($sort_type) {
     case "Id (ascending)":
         $sort_type = "ids_sorted_id_";
@@ -29,8 +27,6 @@ switch ($sort_type) {
         break;
 }
 
-//echo $sort_type . "\n";
-
 $need_pages = $count / 100;
 
 $page_current = $num / 100;
@@ -44,8 +40,8 @@ echo "<div class='section'><div class='container'>";
 foreach ($ids_need_arr as $key => $value) {
     $row = $memcache->get($value);
 
-    //if ($row == null)
-    //    continue;
+    if ($row == null)
+        continue;
 
     if ($counter % 4 == 0) {
         echo "</div>";
@@ -69,7 +65,7 @@ $memcache->close();
 echo "</div></div>";
 
 echo "<div id=\"page-selection\"></div>
-<script type=\"text/javascript\" src=\"http://localhost/looking_goods_system/resources/js/main_page.js\"></script>
+<script type=\"text/javascript\" src=\"resources/js/main_page.js\"></script>
 <script>
     $('#page-selection').bootpag({
         total: $need_pages,

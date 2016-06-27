@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     include "../data_workers/chunk/chunk_delete.php";
 
-    $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
+    $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, $mysql_dbpass, $mysql_dbname);
 
     $memcache = new Memcache;
     $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
@@ -24,8 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result->fetch_array(MYSQL_NUM)[0] == null) {
         echo "<script>alert('id not exist');</script>";
-    }
-    else {
+    } else {
         $sql = 'DELETE FROM goods WHERE id = ' . $id;
 
         $result = $mysqli->query($sql);
@@ -37,10 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         update_chunk_delete($memcache, $id);
 
         $memcache->delete($id);
-        
-        //$count = intval($memcache->get("count"));
-
-        //$memcache->replace("count",  ceil(($count - 1) / 100) * 100);
 
         echo "<script>alert('done');</script>";
     }

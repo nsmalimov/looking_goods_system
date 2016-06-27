@@ -2,7 +2,7 @@
 
 include "settings.php";
 
-$data = file_get_contents("/Applications/XAMPP/xamppfiles/htdocs/looking_goods_system/data_workers/dumps/dump_goods.json");
+$data = file_get_contents("/data_workers/dumps/dump_goods.json");
 $json_a = json_decode($data, true);
 
 $url_image = "http://95.213.237.66/media/waffle-iron.jpg";

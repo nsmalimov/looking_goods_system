@@ -1,14 +1,5 @@
 <?php
 
-//$memcache = new Memcache;
-//$memcache->connect("localhost", 11211) or exit("Could not connect to Memcached");
-
-// ids_sorted_id
-// ids_reversed_id
-
-// ids_sorted_cost
-// ids_reversed_cost
-
 function update_chunk_delete($memcache, $id_num)
 {
     $count = intval($memcache->get("count"));
@@ -83,6 +74,5 @@ function update_chunk_delete($memcache, $id_num)
     }
 }
 
-//$memcache->close();
 
 ?>

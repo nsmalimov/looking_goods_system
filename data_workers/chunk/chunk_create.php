@@ -32,7 +32,6 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
 
                     $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
                     unset($arr);
-                    echo $i . $col_name . $sort_type . "\n";
                     return False;
                 }
             }
@@ -42,7 +41,6 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
             array_unshift($arr, $id_num);
             $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
             unset($arr);
-            echo $i . $col_name . $sort_type . "\n";
             return False;
         }
 
@@ -50,7 +48,6 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
             array_push($arr, $id_num);
             $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
             unset($arr);
-            echo $i . $col_name . $sort_type . "\n";
             return False;
         }
     }
@@ -69,7 +66,6 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
 
                     $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
                     unset($arr);
-                    echo $i . $col_name . $sort_type . "\n";
                     return False;
                 }
             }
@@ -79,7 +75,6 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
             array_unshift($arr, $id_num);
             $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
             unset($arr);
-            echo $i . $col_name . $sort_type . "\n";
             return False;
         }
 
@@ -87,7 +82,6 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
             array_push($arr, $id_num);
             $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
             unset($arr);
-            echo $i . $col_name . $sort_type . "\n";
             return False;
         }
     }
@@ -126,7 +120,6 @@ function update_chunk_create($memcache, $id_num, $cost)
         if (!$ids_reversed_id_need and !$ids_reversed_cost_need 
             and !$ids_sorted_cost_need and !$ids_sorted_id_need) 
         {
-            echo "break" . "\n";
             break;
         }
     }

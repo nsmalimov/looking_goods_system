@@ -15,7 +15,7 @@ else {
     serverPath = serverProtocolName + "//" + serverHostName;
 }
 
-var append_path = "/looking_goods_system";
+var append_path = "";
 
 function serverPostFunc(serverUrl, jsonData, idWhereNeedPut) {
     $.ajax({

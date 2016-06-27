@@ -1,7 +1,7 @@
 <?php
 include "settings.php";
 
-ini_set('memory_limit','400M');
+ini_set('memory_limit', '400M');
 
 $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
 

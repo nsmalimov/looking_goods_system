@@ -10,11 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST["id_num"];
             $values = $memcache->get($id);
 
-            if ($values == null)
-            {
+            if ($values == null) {
                 echo "<script>alert('id not exist');</script>";
-            }
-            else {
+            } else {
 
                 $description = preg_replace('/[\r\n]+/', "", $values['description']);
 
@@ -33,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             include "../data_workers/chunk/chunk_create.php";
             include "../data_workers/chunk/chunk_delete.php";
-            
+
             $title = $_POST['title'];
             $description = $_POST['description'];
             $url_image = $_POST['url_image'];
@@ -41,15 +39,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id_original = $_POST['id_num_original'];
             $id_need_set = $_POST['id_num_need_set'];
 
-            $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
+            $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, $mysql_dbpass, $mysql_dbname);
 
             $sql = 'select id FROM goods WHERE id = ' . $id_need_set;
             $result = $mysqli->query($sql);
 
             if ($result->fetch_array(MYSQL_NUM)[0] != null and $id_original != $id_need_set) {
                 echo "<script>alert('id exist');</script>";
-            }
-            else {
+            } else {
 
                 if ($mysqli->connect_errno) {
                     printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);

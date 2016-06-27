@@ -8,7 +8,7 @@ define('MYSQL_ASSOC', MYSQLI_ASSOC);
 
 ini_set('memory_limit', '750M');
 
-$mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
+$mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, $mysql_dbpass, $mysql_dbname);
 
 $memcache = new Memcache;
 $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
