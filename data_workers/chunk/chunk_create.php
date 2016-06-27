@@ -28,7 +28,7 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
 
                 if ($val >= $id_num_elem) {
                     $inserted = array($id_num);
-                    array_splice($arr, $key, 0, $inserted);
+                    array_splice($arr, intval($key)-1, 0, $inserted);
 
                     $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
                     unset($arr);
@@ -62,7 +62,7 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
 
                 if ($val <= $id_num_elem) {
                     $inserted = array($id_num);
-                    array_splice($arr, $key, 0, $inserted);
+                    array_splice($arr, intval($key)-1, 0, $inserted);
 
                     $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
                     unset($arr);

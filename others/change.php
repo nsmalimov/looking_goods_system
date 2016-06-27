@@ -1,4 +1,9 @@
 <?php
+
+define('MYSQL_BOTH', MYSQLI_BOTH);
+define('MYSQL_NUM', MYSQLI_NUM);
+define('MYSQL_ASSOC', MYSQLI_ASSOC);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include "../data_workers/settings.php";
 
@@ -72,6 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 update_chunk_delete($memcache, $id_original);
 
+                $memcache->close();
+
+                $memcache = new Memcache;
+                $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
+
                 update_chunk_create($memcache, $id_need_set, $cost);
 
                 unset($new_arr);
@@ -86,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
     }
 
-
+    $memcache->close();
 }
 
 ?>

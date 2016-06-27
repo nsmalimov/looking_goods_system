@@ -117,6 +117,12 @@ function confirmChangeFunc() {
         return;
     }
 
+    if (json_create.cost < 0)
+    {
+        alert("bad cost");
+        return;
+    }
+
     var serverUrl = serverPath + append_path + "/others/change.php";
     serverPostFunc(serverUrl, json_create, "#goodsList");
 }
@@ -133,6 +139,12 @@ function confirmCreateFunc() {
         isNaN(json_create.cost))
     {
         alert("not digit");
+        return;
+    }
+
+    if (json_create.cost < 0)
+    {
+        alert("bad cost");
         return;
     }
 
