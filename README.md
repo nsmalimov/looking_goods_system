@@ -48,7 +48,7 @@ Transfer rate:          588.70 [Kbytes/sec] received
 ```markdown
 Transaction rate:	      189.64 trans/sec
 Throughput:		        0.15 MB/sec
-Concurrency:		        0.25<p>
+Concurrency:		        0.25
 Successful transactions:        1849
 Failed transactions:	           0
 ```
