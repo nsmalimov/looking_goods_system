@@ -45,25 +45,26 @@ Transfer rate:          588.70 [Kbytes/sec] received
 С учётом, что считается вся выдача сервера, то 211/5=42 - следовательно в среднем сервер выдерживает до 40 запросов на выдачу списка первых 100 товаров в секунду. С остальными партициями ситуация будет аналогичной, так как в запросе не задействуется SQL, только кеш.
 
 - Siege
-
+```markdown
 <p>Transaction rate:	      189.64 trans/sec</p>
 <p>Throughput:		        0.15 MB/sec</p>
 <p>Concurrency:		        0.25<p>
 <p>Successful transactions:        1849</p>
 <p>Failed transactions:	           0</p>
+```
 
 Результаты аналогичные.
 
 - httperf
+```markdown
+Connection rate: 199.2 conn/s (5.0 ms/conn, <=16 concurrent connections)
+Connection time [ms]: min 36.5 avg 46.4 max 200.3 median 44.5 stddev 8.8
+Connection time [ms]: connect 22.7
+Connection length [replies/conn]: 1.000
 
-<p>Connection rate: 199.2 conn/s (5.0 ms/conn, <=16 concurrent connections)</p>
-<p>Connection time [ms]: min 36.5 avg 46.4 max 200.3 median 44.5 stddev 8.8</p>
-<p>Connection time [ms]: connect 22.7</p>
-<p>Connection length [replies/conn]: 1.000</p>
-
-<p>Request rate: 199.2 req/s (5.0 ms/req)</p>
-<p>Request size [B]: 66.0</p>
-
+Request rate: 199.2 req/s (5.0 ms/req)
+Request size [B]: 66.0
+```
 Результаты аналогичные.
 
 На основе тестирования можно утверждать, что проблем при 1000 запросах к списку товаров в минуту не будет.
