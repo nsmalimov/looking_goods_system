@@ -19,27 +19,26 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
 
     if ($sort_type == "sorted") {
         if ($id_num_elem >= $first_elem and $id_num_elem <= $elem_last) {
-
+            $num1 = 0;
             foreach ($arr as $key => $value) {
                 if ($col_name == "cost")
-                    $val = floatval($value);
+                    $val = floatval($memcache->get(intval($value))['cost']);
                 else
-                    $val = intval($value);
+                    $val = floatval($value);
 
                 if ($val >= $id_num_elem) {
                     $inserted = array($id_num);
-                    array_splice($arr, $key, 0, $inserted);
-
-                    ksort($arr);
+                    array_splice($arr, $num1, 0, $inserted);
 
                     $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
                     unset($arr);
                     return False;
                 }
+                $num1 ++;
             }
         }
 
-        if ($i == 100 and $id_num_elem < $first_elem) {
+        if ($id_num_elem < $first_elem) {
             array_unshift($arr, $id_num);
             $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
             unset($arr);
@@ -55,27 +54,26 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
     }
     else{
         if ($id_num_elem <= $first_elem and $id_num_elem >= $elem_last) {
-
+            $num1 = 0;
             foreach ($arr as $key => $value) {
                 if ($col_name == "cost")
-                    $val = floatval($value);
+                    $val = floatval($memcache->get(intval($value))['cost']);
                 else
-                    $val = intval($value);
+                    $val = floatval($value);
 
                 if ($val <= $id_num_elem) {
                     $inserted = array($id_num);
-                    array_splice($arr, $key, 0, $inserted);
-
-                    ksort($arr);
+                    array_splice($arr, $num1, 0, $inserted);
 
                     $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
                     unset($arr);
                     return False;
                 }
+                $num1 ++;
             }
         }
 
-        if ($i === 100 and $id_num_elem > $first_elem) {
+        if ($id_num_elem > $first_elem) {
             array_unshift($arr, $id_num);
             $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
             unset($arr);

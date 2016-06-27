@@ -15,12 +15,12 @@ function update_chunk_delete($memcache, $id_num)
             $find_num = array_search($id_num, $arr);
 
             if (!($find_num === False)) {
-                
+
                 unset($arr[$find_num]);
                 $memcache->replace("ids_sorted_id_" . $i, $arr);
                 $ids_sorted_id_need = False;
             }
-            
+
             unset($arr);
         }
 
@@ -29,12 +29,12 @@ function update_chunk_delete($memcache, $id_num)
             $find_num = array_search($id_num, $arr);
 
             if (!($find_num === False)) {
-                
+
                 unset($arr[$find_num]);
                 $memcache->replace("ids_reversed_id_" . $i, $arr);
                 $ids_reversed_id_need = False;
             }
-            
+
             unset($arr);
         }
 
@@ -43,12 +43,12 @@ function update_chunk_delete($memcache, $id_num)
             $find_num = array_search($id_num, $arr);
 
             if (!($find_num === False)) {
-                
+
                 unset($arr[$find_num]);
                 $memcache->replace("ids_sorted_cost_" . $i, $arr);
                 $ids_sorted_cost_need = False;
             }
-            
+
             unset($arr);
         }
 
@@ -57,12 +57,12 @@ function update_chunk_delete($memcache, $id_num)
             $find_num = array_search($id_num, $arr);
 
             if (!($find_num === False)) {
-                
+
                 unset($arr[$find_num]);
                 $memcache->replace("ids_reversed_cost_" . $i, $arr);
                 $ids_reversed_cost_need = False;
             }
-            
+
             unset($arr);
         }
         

@@ -1,22 +1,22 @@
 <?php
 
-include "settings.php";
-
-define('MYSQL_BOTH', MYSQLI_BOTH);
-define('MYSQL_NUM', MYSQLI_NUM);
-define('MYSQL_ASSOC', MYSQLI_ASSOC);
-
-ini_set('memory_limit', '750M');
-
-$mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, $mysql_dbpass, $mysql_dbname);
-
-$memcache = new Memcache;
-$memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
-
-if ($mysqli->connect_errno) {
-    printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
-    exit();
-}
+//include "settings.php";
+//
+//define('MYSQL_BOTH', MYSQLI_BOTH);
+//define('MYSQL_NUM', MYSQLI_NUM);
+//define('MYSQL_ASSOC', MYSQLI_ASSOC);
+//
+//ini_set('memory_limit', '750M');
+//
+//$mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, $mysql_dbpass, $mysql_dbname);
+//
+//$memcache = new Memcache;
+//$memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
+//
+//if ($mysqli->connect_errno) {
+//    printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
+//    exit();
+//}
 
 function setAllDataFromSQL($mysqli, $memcache)
 {
@@ -124,14 +124,20 @@ function setOtherVars($mysqli, $memcache)
     
 }
 
-setAllDataFromSQL($mysqli, $memcache);
+//setAllDataFromSQL($mysqli, $memcache);
+//
+//setArraysFromSql($mysqli, $memcache);
+//
+//setOtherVars($mysqli, $memcache);
 
-setArraysFromSql($mysqli, $memcache);
+$s = "11";
 
-setOtherVars($mysqli, $memcache);
+$b = "12";
 
-$memcache->close();
+echo (floatval($s) > floatval($b));
 
-$mysqli->close();
+//$memcache->close();
+
+//$mysqli->close();
 
 ?>
