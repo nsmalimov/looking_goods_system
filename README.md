@@ -1,6 +1,6 @@
 Демо версия [95.213.237.66](http://95.213.237.66/)
 
-# Логика работы
+### Логика работы
 
 При реализации основной логики придерживался принципа, чтобы все данные хранились в memcached, чтобы при выдаче списка товаров достичь максимальной производительности, таким образом клиент при итерации по списку товаров не подключается к mysql.
 
@@ -20,48 +20,51 @@
 
 Но, при таком подходе размер массивов по партициям будет меняться, полгаем, что данные будут меняться равномерно и это будет несущесвенным, если на одной из страниц мы покажем 105 элементов, а на другой 98. К тому же в зависимости от прозводительности сервера, можно варьировать время актуализации данных в кеш, что подразумевает поддержку данных в кеше в актуальном состоянии, имеет смысл 1 раз в сутки, ночью запускать из cron актуализацию данных (insert_data_to_cache.php) - этот скрипт осуществит запросы к базе и актуализирует разбивку на партиции. 
 
-# Технологии
+### Технологии
 Приложение является одностраничным, что подразумевает возможность итерации по списку и осуществление операций вставки, удаления и изменения данных только через навигацию внутри приложения. Клиентская логика реализована на javascript и Jquery.
 
 Сервер: 2 ядра, 4 Гб оперативной памяти, нахождение - спб.
 
 На сервере развернут nginx. Проведена стандартная оптимизация настроек сервера, в базе данных созданы индексы.
 
-# Тестирование:
+### Тестирование:
 
 Включая сам index.html - 5 файлов должен выдать сервер на 1 запрос (js, css).
 
 - Apache Bench
 
 При варьировании разных параметров (запросы, потоки) в среднем получаем такой результат:
+```markdown
+Requests per second:    211.45 [#/sec] (mean)
+Time per request:       47.293 [ms] (mean)
+Time per request:       4.729 [ms] (mean, across all concurrent requests)
+Transfer rate:          588.70 [Kbytes/sec] received
+```
 
-<p>Requests per second:    211.45 [#/sec] (mean)</p>
-<p>Time per request:       47.293 [ms] (mean)</p>
-<p>Time per request:       4.729 [ms] (mean, across all concurrent requests)</p>
-<p>Transfer rate:          588.70 [Kbytes/sec] received</p>
 
 С учётом, что считается вся выдача сервера, то 211/5=42 - следовательно в среднем сервер выдерживает до 40 запросов на выдачу списка первых 100 товаров в секунду. С остальными партициями ситуация будет аналогичной, так как в запросе не задействуется SQL, только кеш.
 
 - Siege
-
-<p>Transaction rate:	      189.64 trans/sec</p>
-<p>Throughput:		        0.15 MB/sec</p>
-<p>Concurrency:		        0.25<p>
-<p>Successful transactions:        1849</p>
-<p>Failed transactions:	           0</p>
+```markdown
+Transaction rate:	      189.64 trans/sec
+Throughput:		        0.15 MB/sec
+Concurrency:		        0.25<p>
+Successful transactions:        1849
+Failed transactions:	           0
+```
 
 Результаты аналогичные.
 
 - httperf
+```markdown
+Connection rate: 199.2 conn/s (5.0 ms/conn, <=16 concurrent connections)
+Connection time [ms]: min 36.5 avg 46.4 max 200.3 median 44.5 stddev 8.8
+Connection time [ms]: connect 22.7
+Connection length [replies/conn]: 1.000
 
-<p>Connection rate: 199.2 conn/s (5.0 ms/conn, <=16 concurrent connections)</p>
-<p>Connection time [ms]: min 36.5 avg 46.4 max 200.3 median 44.5 stddev 8.8</p>
-<p>Connection time [ms]: connect 22.7</p>
-<p>Connection length [replies/conn]: 1.000</p>
-
-<p>Request rate: 199.2 req/s (5.0 ms/req)</p>
-<p>Request size [B]: 66.0</p>
-
+Request rate: 199.2 req/s (5.0 ms/req)
+Request size [B]: 66.0
+```
 Результаты аналогичные.
 
 На основе тестирования можно утверждать, что проблем при 1000 запросах к списку товаров в минуту не будет.
