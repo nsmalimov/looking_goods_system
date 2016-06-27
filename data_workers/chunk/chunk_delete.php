@@ -3,7 +3,7 @@
 function update_chunk_delete($memcache, $id_num)
 {
     $count = intval($memcache->get("count"));
-    
+
     $ids_sorted_id_need = True;
     $ids_reversed_id_need = True;
     $ids_sorted_cost_need = True;
@@ -65,10 +65,10 @@ function update_chunk_delete($memcache, $id_num)
 
             unset($arr);
         }
-        
-        if (!$ids_reversed_cost_need and !$ids_reversed_id_need 
-            and !$ids_sorted_id_need and !$ids_sorted_cost_need)
-        {
+
+        if (!$ids_reversed_cost_need and !$ids_reversed_id_need
+            and !$ids_sorted_id_need and !$ids_sorted_cost_need
+        ) {
             break;
         }
     }

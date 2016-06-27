@@ -34,7 +34,6 @@ function serverPostFunc(serverUrl, jsonData, idWhereNeedPut) {
 function serverGetFunc(serverUrl, idWhereNeedPut) {
     $.ajax({
         url: serverUrl,
-        //    cache: false,
         success: function (html) {
             $(idWhereNeedPut).html(html);
         }
@@ -82,8 +81,7 @@ function confirmDeleteFunc() {
 
     json_create.id_num = $("#inputId").val();
 
-    if (!(Number.isInteger(parseInt(json_create.id_num))))
-    {
+    if (!(Number.isInteger(parseInt(json_create.id_num)))) {
         alert("not digit");
         return;
     }
@@ -104,21 +102,18 @@ function confirmChangeFunc() {
     json_create.id_num_need_set = $("#inputIdNumNeedSet").val();
 
     if (isNaN(parseInt(json_create.id_num_original)) ||
-            isNaN(parseInt(json_create.id_num_need_set)) ||
-        isNaN(json_create.cost))
-    {
+        isNaN(parseInt(json_create.id_num_need_set)) ||
+        isNaN(json_create.cost)) {
         alert("not digit");
         return;
     }
 
-    if (json_create.id_num_original.length == 0)
-    {
+    if (json_create.id_num_original.length == 0) {
         alert("id is empty");
         return;
     }
 
-    if (json_create.cost < 0)
-    {
+    if (json_create.cost < 0) {
         alert("bad cost");
         return;
     }
@@ -136,14 +131,12 @@ function confirmCreateFunc() {
     json_create.id_num = $("#inputIdNum").val();
 
     if (isNaN(parseInt(json_create.id_num)) ||
-        isNaN(json_create.cost))
-    {
+        isNaN(json_create.cost)) {
         alert("not digit");
         return;
     }
 
-    if (json_create.cost < 0)
-    {
+    if (json_create.cost < 0) {
         alert("bad cost");
         return;
     }
@@ -157,8 +150,7 @@ function selectByIdNum() {
     json_create.id_num = $("#inputIdNumOriginal").val();
     json_create.command = "select";
 
-    if (!(Number.isInteger(parseInt(json_create.id_num))))
-    {
+    if (!(Number.isInteger(parseInt(json_create.id_num)))) {
         alert("not digit");
         return;
     }
@@ -171,7 +163,6 @@ function showAllFunc(need_count, type) {
     showAllControlButton();
     $("#showAllButton").hide();
     $("#drop_down_container").show();
-    //$("#sorting_label").text("Sorting");
     $(".dropdown-menu li a").parents('.btn-group').find('.dropdown-toggle').html(type + ' <span class="caret"></span>');
 
     var json_create = {};
@@ -183,8 +174,6 @@ function showAllFunc(need_count, type) {
 }
 
 window.onload = function () {
-
-    //alert(isNaN(parseFloat("www")));
     showAllControlButton();
     showAllFunc(100, "Id (ascending)");
 
@@ -199,8 +188,4 @@ window.onload = function () {
 function log() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));
     console.log.apply(console, arguments);
-}
-
-function isFloat(n) {
-    return n === +n && n !== (n|0);
 }

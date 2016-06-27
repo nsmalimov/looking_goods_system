@@ -38,8 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         update_chunk_delete($memcache, $id);
 
         $memcache->delete($id);
-
-        //echo "<script>alert('done');</script>";
     }
 
     $memcache->close();

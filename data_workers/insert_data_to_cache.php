@@ -64,7 +64,7 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
     $num = 0;
 
     $first = 0;
-    for ($i = 100; $i <= ceil($count/100)*100; $i += 100) {
+    for ($i = 100; $i <= ceil($count / 100) * 100; $i += 100) {
         if ($num % 1000 == 0 and $num != 0)
             echo $num . "\n";
 
@@ -73,7 +73,7 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
         for ($j = $first; $j < $first + 100; $j++) {
             if (array_key_exists($j, $arr_id))
                 if ($arr_id[$j] != null)
-                    
+
                     array_push($sliced_arr, $arr_id[$j]);
         }
 
@@ -121,7 +121,7 @@ function setOtherVars($mysqli, $memcache)
     $count = getCountInBase($mysqli);
 
     $memcache->set("count", ceil($count / 100) * 100);
-    
+
 }
 
 setAllDataFromSQL($mysqli, $memcache);

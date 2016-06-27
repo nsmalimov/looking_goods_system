@@ -3,15 +3,12 @@
 function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_name)
 {
     $arr = $memcache->get("ids_" . $sort_type . "_" . $col_name . "_" . $i);
-    
-    if ($col_name == "cost")
-    {
+
+    if ($col_name == "cost") {
         $first_elem = floatval($memcache->get(array_values($arr)[0])['cost']);
         $id_num_elem = floatval($cost);
         $elem_last = floatval($memcache->get(end($arr))['cost']);
-    }
-    else
-    {
+    } else {
         $first_elem = intval(array_values($arr)[0]);
         $id_num_elem = intval($id_num);
         $elem_last = intval(end($arr));
@@ -24,7 +21,7 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
                 if ($col_name == "cost")
                     $val = floatval($memcache->get(intval($value))['cost']);
                 else
-                    $val = floatval($value);
+                    $val = intval($value);
 
                 if ($val >= $id_num_elem) {
                     $inserted = array($id_num);
@@ -34,7 +31,7 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
                     unset($arr);
                     return False;
                 }
-                $num1 ++;
+                $num1++;
             }
         }
 
@@ -51,15 +48,14 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
             unset($arr);
             return False;
         }
-    }
-    else{
+    } else {
         if ($id_num_elem <= $first_elem and $id_num_elem >= $elem_last) {
             $num1 = 0;
             foreach ($arr as $key => $value) {
                 if ($col_name == "cost")
                     $val = floatval($memcache->get(intval($value))['cost']);
                 else
-                    $val = floatval($value);
+                    $val = intval($value);
 
                 if ($val <= $id_num_elem) {
                     $inserted = array($id_num);
@@ -69,7 +65,7 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
                     unset($arr);
                     return False;
                 }
-                $num1 ++;
+                $num1++;
             }
         }
 
@@ -119,9 +115,9 @@ function update_chunk_create($memcache, $id_num, $cost)
             $ids_reversed_cost_need = find_put_chunk($memcache, $count, $i, $id_num, $cost, "reversed", "cost");
         }
 
-        if (!$ids_reversed_id_need and !$ids_reversed_cost_need 
-            and !$ids_sorted_cost_need and !$ids_sorted_id_need) 
-        {
+        if (!$ids_reversed_id_need and !$ids_reversed_cost_need
+            and !$ids_sorted_cost_need and !$ids_sorted_id_need
+        ) {
             break;
         }
     }

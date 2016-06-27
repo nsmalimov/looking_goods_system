@@ -76,12 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $memcache->set($id_need_set, $new_arr);
 
                 update_chunk_delete($memcache, $id_original);
-                
+
                 update_chunk_create($memcache, $id_need_set, $cost);
 
                 unset($new_arr);
-
-                //echo "<script>alert('done');</script>";
             }
 
             $mysqli->close();
