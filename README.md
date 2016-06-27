@@ -52,7 +52,7 @@
 
 Результаты аналогичные.
 
--httperf
+- httperf
 
 <p>Connection rate: 199.2 conn/s (5.0 ms/conn, <=16 concurrent connections)</p>
 <p>Connection time [ms]: min 36.5 avg 46.4 max 200.3 median 44.5 stddev 8.8</p>
