@@ -19,7 +19,7 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
 
     if ($sort_type == "sorted") {
         if ($id_num_elem >= $first_elem and $id_num_elem <= $elem_last) {
-
+            $last = array_keys($arr)[0];
             foreach ($arr as $key => $value) {
                 if ($col_name == "cost")
                     $val = floatval($value);
@@ -28,12 +28,13 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
 
                 if ($val >= $id_num_elem) {
                     $inserted = array($id_num);
-                    array_splice($arr, intval($key)-1, 0, $inserted);
+                    array_splice($arr, $last, 0, $inserted);
 
                     $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
                     unset($arr);
                     return False;
                 }
+                $last = $key;
             }
         }
 
@@ -54,6 +55,7 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
     else{
         if ($id_num_elem <= $first_elem and $id_num_elem >= $elem_last) {
 
+            $last = array_keys($arr)[0];
             foreach ($arr as $key => $value) {
                 if ($col_name == "cost")
                     $val = floatval($value);
@@ -62,12 +64,13 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
 
                 if ($val <= $id_num_elem) {
                     $inserted = array($id_num);
-                    array_splice($arr, intval($key)-1, 0, $inserted);
+                    array_splice($arr, $last, 0, $inserted);
 
                     $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
                     unset($arr);
                     return False;
                 }
+                $last = $key;
             }
         }
 

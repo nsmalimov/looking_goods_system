@@ -76,12 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $memcache->set($id_need_set, $new_arr);
 
                 update_chunk_delete($memcache, $id_original);
-
-                $memcache->close();
-
-                $memcache = new Memcache;
-                $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
-
+                
                 update_chunk_create($memcache, $id_need_set, $cost);
 
                 unset($new_arr);
