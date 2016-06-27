@@ -46,11 +46,11 @@ Transfer rate:          588.70 [Kbytes/sec] received
 
 - Siege
 ```markdown
-<p>Transaction rate:	      189.64 trans/sec</p>
-<p>Throughput:		        0.15 MB/sec</p>
-<p>Concurrency:		        0.25<p>
-<p>Successful transactions:        1849</p>
-<p>Failed transactions:	           0</p>
+Transaction rate:	      189.64 trans/sec
+Throughput:		        0.15 MB/sec
+Concurrency:		        0.25<p>
+Successful transactions:        1849
+Failed transactions:	           0
 ```
 
 Результаты аналогичные.
