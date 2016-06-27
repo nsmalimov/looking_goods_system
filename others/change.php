@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sql = 'select id FROM goods WHERE id = ' . $id_need_set;
             $result = $mysqli->query($sql);
 
-            if ($result->fetch_array(MYSQL_NUM)[0] != null) {
+            if ($result->fetch_array(MYSQL_NUM)[0] != null and $id_original != $id_need_set) {
                 echo "<script>alert('id exist');</script>";
             }
             else {
@@ -75,15 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 update_chunk_delete($memcache, $id_original);
 
-                //print_r($memcache->get("ids_reversed_cost_100"));
-
                 update_chunk_create($memcache, $id_need_set, $cost);
 
                 unset($new_arr);
 
                 echo "<script>alert('done');</script>";
-
-
             }
 
             $mysqli->close();

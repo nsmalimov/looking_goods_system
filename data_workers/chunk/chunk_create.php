@@ -1,19 +1,104 @@
 <?php
 
-//$memcache = new Memcache;
-//$memcache->connect("localhost", 8000) or exit("Could not connect to Memcached");
+function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_name)
+{
+    $arr = $memcache->get("ids_" . $sort_type . "_" . $col_name . "_" . $i);
+    
+    if ($col_name == "cost")
+    {
+        $first_elem = floatval($memcache->get(array_values($arr)[0])['cost']);
+        $id_num_elem = floatval($cost);
+        $elem_last = floatval($memcache->get(end($arr))['cost']);
+    }
+    else
+    {
+        $first_elem = intval(array_values($arr)[0]);
+        $id_num_elem = intval($id_num);
+        $elem_last = intval(end($arr));
+    }
 
-// ids_sorted_id
-// ids_reversed_id
+    if ($sort_type == "sorted") {
+        if ($id_num_elem >= $first_elem and $id_num_elem <= $elem_last) {
 
-// ids_sorted_cost
-// ids_reversed_cost
+            foreach ($arr as $key => $value) {
+                if ($col_name == "cost")
+                    $val = floatval($value);
+                else
+                    $val = intval($value);
+
+                if ($val >= $id_num_elem) {
+                    $inserted = array($id_num);
+                    array_splice($arr, $key, 0, $inserted);
+
+                    $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
+                    unset($arr);
+                    echo $i . $col_name . $sort_type . "\n";
+                    return False;
+                }
+            }
+        }
+
+        if ($i == 100 and $id_num_elem < $first_elem) {
+            array_unshift($arr, $id_num);
+            $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
+            unset($arr);
+            echo $i . $col_name . $sort_type . "\n";
+            return False;
+        }
+
+        if ($i == $count and $id_num_elem > $elem_last) {
+            array_push($arr, $id_num);
+            $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
+            unset($arr);
+            echo $i . $col_name . $sort_type . "\n";
+            return False;
+        }
+    }
+    else{
+        if ($id_num_elem <= $first_elem and $id_num_elem >= $elem_last) {
+
+            foreach ($arr as $key => $value) {
+                if ($col_name == "cost")
+                    $val = floatval($value);
+                else
+                    $val = intval($value);
+
+                if ($val <= $id_num_elem) {
+                    $inserted = array($id_num);
+                    array_splice($arr, $key, 0, $inserted);
+
+                    $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
+                    unset($arr);
+                    echo $i . $col_name . $sort_type . "\n";
+                    return False;
+                }
+            }
+        }
+
+        if ($i === 100 and $id_num_elem > $first_elem) {
+            array_unshift($arr, $id_num);
+            $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
+            unset($arr);
+            echo $i . $col_name . $sort_type . "\n";
+            return False;
+        }
+
+        if ($i === $count and $id_num_elem < $elem_last) {
+            array_push($arr, $id_num);
+            $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
+            unset($arr);
+            echo $i . $col_name . $sort_type . "\n";
+            return False;
+        }
+    }
+
+    unset($arr);
+    return True;
+}
 
 function update_chunk_create($memcache, $id_num, $cost)
 {
     $count = intval($memcache->get("count"));
-
-    //echo $id_num . "\t" . gettype($id_num) . "\n";
 
     $ids_sorted_id_need = True;
     $ids_reversed_id_need = True;
@@ -21,152 +106,30 @@ function update_chunk_create($memcache, $id_num, $cost)
     $ids_reversed_cost_need = True;
 
     for ($i = 100; $i <= $count; $i += 100) {
+
         if ($ids_sorted_id_need) {
-            $arr = $memcache->get("ids_sorted_id_" . $i);
-
-            if ($i == $count and intval($id_num) > intval(end($arr))) {
-                array_push($arr, $id_num);
-                $memcache->replace("ids_sorted_id_" . $i, $arr);
-                $ids_sorted_id_need = False;
-
-            } elseif (intval($id_num) <= intval(array_values($arr)[0])) {
-                array_unshift($arr, $id_num);
-                $memcache->replace("ids_sorted_id_" . $i, $arr);
-                $ids_sorted_id_need = False;
-
-            } elseif (intval($id_num) > intval(end($arr))) {
-                continue;
-
-            } elseif (intval($id_num) > intval(array_values($arr)[0]) and intval($id_num) <= intval(end($arr))) {
-                foreach ($arr as $key => $value) {
-                    if (intval($value) >= intval($id_num)) {
-                        $inserted = array($id_num);
-                        array_splice($arr, $key, 0, $inserted);
-                        $memcache->replace("ids_sorted_id_" . $i, $arr);
-                        break;
-                    }
-                }
-            }
-
-            unset($arr);
+            $ids_sorted_id_need = find_put_chunk($memcache, $count, $i, $id_num, $cost, "sorted", "id");
         }
 
         if ($ids_reversed_id_need) {
-            $arr = $memcache->get("ids_reversed_id_" . $i);
-
-            if ($i == $count and intval($id_num) > intval(end($arr))) {
-                array_push($arr, $id_num);
-                $memcache->replace("ids_reversed_id_" . $i, $arr);
-                $ids_reversed_id_need = False;
-
-            } elseif (intval($id_num) <= intval(array_values($arr)[0])) {
-                array_unshift($arr, $id_num);
-                $memcache->replace("ids_reversed_id_" . $i, $arr);
-                $ids_reversed_id_need = False;
-
-            } elseif (intval($id_num) > intval(end($arr))) {
-                continue;
-
-            } elseif (intval($id_num) > intval(array_values($arr)[0]) and intval($id_num) <= intval(end($arr))) {
-                foreach ($arr as $key => $value) {
-                    if (intval($value) >= intval($id_num)) {
-                        $inserted = array($id_num);
-                        array_splice($arr, $key, 0, $inserted);
-                        $memcache->replace("ids_reversed_id_" . $i, $arr);
-                        break;
-                    }
-                }
-            }
-
-            unset($arr);
+            $ids_reversed_id_need = find_put_chunk($memcache, $count, $i, $id_num, $cost, "reversed", "id");
         }
 
         if ($ids_sorted_cost_need) {
-            $arr = $memcache->get("ids_sorted_cost_" . $i);
-
-            if ($i == $count and intval($id_num) > intval(end($arr))) {
-                array_push($arr, $id_num);
-                $memcache->replace("ids_sorted_cost_" . $i, $arr);
-                $ids_sorted_cost_need = False;
-
-            } elseif (intval($id_num) <= intval(array_values($arr)[0])) {
-                array_unshift($arr, $id_num);
-                $memcache->replace("ids_sorted_cost_" . $i, $arr);
-                $ids_sorted_cost_need = False;
-
-            } elseif (intval($id_num) > intval(end($arr))) {
-                continue;
-
-            } elseif (intval($id_num) > intval(array_values($arr)[0]) and intval($id_num) <= intval(end($arr))) {
-                foreach ($arr as $key => $value) {
-                    if (intval($value) >= intval($id_num)) {
-                        $inserted = array($id_num);
-                        array_splice($arr, $key, 0, $inserted);
-                        $memcache->replace("ids_sorted_cost_" . $i, $arr);
-                        break;
-                    }
-                }
-            }
-
-            unset($arr);
+            $ids_sorted_cost_need = find_put_chunk($memcache, $count, $i, $id_num, $cost, "sorted", "cost");
         }
 
         if ($ids_reversed_cost_need) {
-            $arr = $memcache->get("ids_reversed_cost_" . $i);
-
-            if ($i == $count and intval($id_num) > intval(end($arr))) {
-                array_push($arr, $id_num);
-                $memcache->replace("ids_reversed_cost_" . $i, $arr);
-                $ids_reversed_cost_need = False;
-
-            } elseif (intval($id_num) <= intval(array_values($arr)[0])) {
-                array_unshift($arr, $id_num);
-                $memcache->replace("ids_reversed_cost_" . $i, $arr);
-                $ids_reversed_cost_need = False;
-
-            } elseif (intval($id_num) > intval(end($arr))) {
-                continue;
-
-            } elseif (intval($id_num) > intval(array_values($arr)[0]) and intval($id_num) <= intval(end($arr))) {
-                foreach ($arr as $key => $value) {
-                    if (intval($value) >= intval($id_num)) {
-                        $inserted = array($id_num);
-                        array_splice($arr, $key, 0, $inserted);
-                        $memcache->replace("ids_reversed_cost_" . $i, $arr);
-                        break;
-                    }
-                }
-            }
-
-            unset($arr);
+            $ids_reversed_cost_need = find_put_chunk($memcache, $count, $i, $id_num, $cost, "reversed", "cost");
         }
 
-
-        if (!$ids_reversed_cost_need and !$ids_reversed_id_need
-            and !$ids_sorted_id_need and !$ids_sorted_cost_need)
+        if (!$ids_reversed_id_need and !$ids_reversed_cost_need 
+            and !$ids_sorted_cost_need and !$ids_sorted_id_need) 
         {
             echo "break" . "\n";
             break;
         }
     }
 }
-
-//update_chunk_create($memcache, "3", "1000");
-//print_r($memcache->get("ids_sorted_id_100"));
-
-//$s = array(12,13,15,20);
-
-
-//$d = array(100);
-
-//$arr_temp = $memcache->get("ids_reversed_id_" . $rev_i);
-//array_splice($s, 2, 0, $d);
-
-//foreach ($s as $key => $value)
-//{
-///    echo $key . "\t" . $value . "\n";
-//}
-
-//$memcache->close();
 
 ?>

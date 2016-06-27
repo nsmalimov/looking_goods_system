@@ -37,8 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         update_chunk_delete($memcache, $id);
 
         $memcache->delete($id);
+        
+        //$count = intval($memcache->get("count"));
 
-        $memcache->set("count", ceil(($memcache->get("count") - 1) / 100) * 100);
+        //$memcache->replace("count",  ceil(($count - 1) / 100) * 100);
 
         echo "<script>alert('done');</script>";
     }

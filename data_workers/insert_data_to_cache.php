@@ -121,17 +121,15 @@ function setOtherVars($mysqli, $memcache)
     $count = getCountInBase($mysqli);
 
     $memcache->set("count", ceil($count / 100) * 100);
+    
 }
 
-//setAllDataFromSQL($mysqli, $memcache);
+setAllDataFromSQL($mysqli, $memcache);
 
 setArraysFromSql($mysqli, $memcache);
 
 setOtherVars($mysqli, $memcache);
 
-//print_r(gettype($memcache->get("13")['cost']));
-
-//print_r($memcache->get("ids_reversed_cost_100"));
 $memcache->close();
 
 $mysqli->close();
