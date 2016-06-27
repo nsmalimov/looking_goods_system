@@ -52,3 +52,17 @@
 
 Результаты аналогичные.
 
+-httperf
+
+<p>Connection rate: 199.2 conn/s (5.0 ms/conn, <=16 concurrent connections)</p>
+<p>Connection time [ms]: min 36.5 avg 46.4 max 200.3 median 44.5 stddev 8.8</p>
+<p>Connection time [ms]: connect 22.7</p>
+<p>Connection length [replies/conn]: 1.000</p>
+
+<p>Request rate: 199.2 req/s (5.0 ms/req)</p>
+<p>Request size [B]: 66.0</p>
+
+Результаты аналогичные.
+
+На основе тестирования можно утверждать, что проблем при 1000 запросах к списку товаров в секунду не будет.
+
