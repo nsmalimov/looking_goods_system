@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         update_chunk_create($memcache, $id, $cost);
 
-        echo "<script>alert('done');</script>";
+        //echo "<script>alert('done');</script>";
     }
 
 

@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 unset($new_arr);
 
-                echo "<script>alert('done');</script>";
+                //echo "<script>alert('done');</script>";
             }
 
             $mysqli->close();
