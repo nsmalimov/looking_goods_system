@@ -76,7 +76,7 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
             return False;
         }
 
-        if ($i === $count and $id_num_elem < $elem_last) {
+        if ($i == $count and $id_num_elem < $elem_last) {
             array_push($arr, $id_num);
             $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
             unset($arr);
