@@ -1,27 +1,28 @@
 <?php
-include "settings.php";
 
-ini_set('memory_limit', '400M');
+ini_set('memory_limit', '750M');
 
-$mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, "", $mysql_dbname);
+$a = range(1, 1000000);
 
-if ($mysqli->connect_errno) {
-    printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
-    exit();
-}
+$time_start = microtime(true);
 
-$sql_all = 'SELECT * FROM goods LIMIT 300000';
+$k = 500000;
 
-$result_all = $mysqli->query($sql_all);
+//echo array_keys($a)[100] . "\n";
 
-//$count = 0;
-//
-//$arr_id = array();
-//
-//while($row = $result_all->fetch_array(MYSQL_ASSOC))
+$r = array_search($k, $a);
+//for ($i = 0; $i < count($a); $i++)
 //{
-//
-//    array_push($arr_id, $row);
+//    if ($i == $k)
+//    {
+//        echo "111 \n";
+//    }
 //}
+
+$time_end = microtime(true);
+
+$execution_time = ($time_end - $time_start);
+
+echo $execution_time . "\n";
 
 ?>

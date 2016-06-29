@@ -37,13 +37,15 @@ $counter = 0;
 
 echo "<div class='section'><div class='container'>";
 
+//$inserted = 0;
+
 foreach ($ids_need_arr as $key => $value) {
     $row = $memcache->get($value);
 
-    if ($row == null)
-        continue;
+//    if ($row == null)
+//        continue;
 
-    if ($counter % 4 == 0) {
+    if ($counter % 6 == 0) {
         echo "</div>";
         echo "<div class='row'>";
     }
@@ -52,7 +54,7 @@ foreach ($ids_need_arr as $key => $value) {
                 <img src='{$row['url_image']}'
                      class='img-responsive'>
                 <h2>{$row['title']}</h2>
-                <p>num: {$value}</p>
+                <p>num: {$key}</p>
                 <p>description: {$row['description']}</p>
                 <p>cost: {$row['cost']}</p>
             </div>";
@@ -65,20 +67,20 @@ $memcache->close();
 echo "</div></div>";
 
 echo "<div id=\"page-selection\"></div>
-<script type=\"text/javascript\" src=\"resources/js/main_page.js\"></script>
+<script type=\"text/javascript\" src=\"http://localhost/looking_goods_system/resources/js/main_page.js\"></script>
 <script>
     $('#page-selection').bootpag({
         total: $need_pages,
         page: $page_current,
-        maxVisible: 15
+        maxVisible: 28
 
     }).on(\"page\", function (event, num) {
 
         showAllFunc(num * 100, $('#sort_type').text());
     });
 </script>
-<p id=\"page_num\" style=\"visibility: hidden\">" . $page_current . "</p>";
-
+<p id=\"page_num\" style=\"visibility: hidden\">" . $page_current . "</p>
+<p id=\"offset\" style=\"visibility: hidden\">" . $page_current . "</p>";
 ?>
 
 

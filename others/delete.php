@@ -1,7 +1,10 @@
 <?php
-define('MYSQL_BOTH', MYSQLI_BOTH);
-define('MYSQL_NUM', MYSQLI_NUM);
-define('MYSQL_ASSOC', MYSQLI_ASSOC);
+
+//define('MYSQL_BOTH', MYSQLI_BOTH);
+//define('MYSQL_NUM', MYSQLI_NUM);
+//define('MYSQL_ASSOC', MYSQLI_ASSOC);
+
+ini_set('memory_limit', '750M');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -21,23 +24,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $sql = 'select id FROM goods WHERE id = ' . $id;
+    $sql = 'DELETE FROM goods WHERE id = ' . "'$id'";
+
     $result = $mysqli->query($sql);
-
-    if ($result->fetch_array(MYSQL_NUM)[0] == null) {
-        echo "<script>alert('id not exist');</script>";
-    } else {
-        $sql = 'DELETE FROM goods WHERE id = ' . $id;
-
-        $result = $mysqli->query($sql);
-
-        if (!$result) {
-            die('Could not delete data: ' . $mysqli->error);
+    
+    if ($result)
+    {
+        if (mysqli_affected_rows($mysqli) > 0) {
+            update_chunk_delete($memcache, $id);
+            $memcache->delete($id);
+        } else {
+            echo "<script>alert('id not exist');</script>";
         }
-
-        update_chunk_delete($memcache, $id);
-
-        $memcache->delete($id);
+    }
+    else{
+        die('Could not delete data: ' . $mysqli->error);
     }
 
     $memcache->close();

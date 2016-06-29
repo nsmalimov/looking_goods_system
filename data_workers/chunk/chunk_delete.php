@@ -2,6 +2,8 @@
 
 function update_chunk_delete($memcache, $id_num)
 {
+    $time_start = microtime(true);
+
     $count = intval($memcache->get("count"));
 
     $ids_sorted_id_need = True;
@@ -12,12 +14,11 @@ function update_chunk_delete($memcache, $id_num)
     for ($i = 100; $i <= $count; $i += 100) {
         if ($ids_sorted_id_need) {
             $arr = $memcache->get("ids_sorted_id_" . $i);
-            $find_num = array_search($id_num, $arr);
 
-            if (!($find_num === False)) {
-
-                unset($arr[$find_num]);
+            if (array_key_exists($id_num, $arr)) {
+                unset($arr[$id_num]);
                 $memcache->replace("ids_sorted_id_" . $i, $arr);
+
                 $ids_sorted_id_need = False;
             }
 
@@ -26,12 +27,11 @@ function update_chunk_delete($memcache, $id_num)
 
         if ($ids_reversed_id_need) {
             $arr = $memcache->get("ids_reversed_id_" . $i);
-            $find_num = array_search($id_num, $arr);
 
-            if (!($find_num === False)) {
-
-                unset($arr[$find_num]);
+            if (array_key_exists($id_num, $arr)) {
+                unset($arr[$id_num]);
                 $memcache->replace("ids_reversed_id_" . $i, $arr);
+
                 $ids_reversed_id_need = False;
             }
 
@@ -40,12 +40,11 @@ function update_chunk_delete($memcache, $id_num)
 
         if ($ids_sorted_cost_need) {
             $arr = $memcache->get("ids_sorted_cost_" . $i);
-            $find_num = array_search($id_num, $arr);
 
-            if (!($find_num === False)) {
-
-                unset($arr[$find_num]);
+            if (array_key_exists($id_num, $arr)) {
+                unset($arr[$id_num]);
                 $memcache->replace("ids_sorted_cost_" . $i, $arr);
+
                 $ids_sorted_cost_need = False;
             }
 
@@ -54,12 +53,11 @@ function update_chunk_delete($memcache, $id_num)
 
         if ($ids_reversed_cost_need) {
             $arr = $memcache->get("ids_reversed_cost_" . $i);
-            $find_num = array_search($id_num, $arr);
 
-            if (!($find_num === False)) {
-
-                unset($arr[$find_num]);
+            if (array_key_exists($id_num, $arr)) {
+                unset($arr[$id_num]);
                 $memcache->replace("ids_reversed_cost_" . $i, $arr);
+
                 $ids_reversed_cost_need = False;
             }
 
@@ -67,12 +65,18 @@ function update_chunk_delete($memcache, $id_num)
         }
 
         if (!$ids_reversed_cost_need and !$ids_reversed_id_need
-            and !$ids_sorted_id_need and !$ids_sorted_cost_need
-        ) {
+            and !$ids_sorted_id_need and !$ids_sorted_cost_need)
+        {
+            echo "break";
             break;
         }
     }
-}
 
+    $time_end = microtime(true);
+
+    $execution_time = ($time_end - $time_start);
+
+    echo '<b>Total Execution Time:</b> '.$execution_time.' Mins';
+}
 
 ?>

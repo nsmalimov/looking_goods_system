@@ -2,9 +2,9 @@
 
 include "settings.php";
 
-define('MYSQL_BOTH', MYSQLI_BOTH);
-define('MYSQL_NUM', MYSQLI_NUM);
-define('MYSQL_ASSOC', MYSQLI_ASSOC);
+//define('MYSQL_BOTH', MYSQLI_BOTH);
+//define('MYSQL_NUM', MYSQLI_NUM);
+//define('MYSQL_ASSOC', MYSQLI_ASSOC);
 
 ini_set('memory_limit', '750M');
 
@@ -23,8 +23,7 @@ function setAllDataFromSQL($mysqli, $memcache)
     $sql_all = 'SELECT * FROM goods';
 
     $result_all = $mysqli->query($sql_all);
-
-
+    
     $count = 0;
 
     while ($row = $result_all->fetch_array(MYSQL_ASSOC)) {
@@ -46,49 +45,56 @@ function setAllDataFromSQL($mysqli, $memcache)
 function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
 {
     if ($type == "sorted") {
-        $sql_ids = 'SELECT id FROM goods FORCE INDEX (' . $col_name . ') ORDER BY ' . $col_name;
+        $sql_ids = 'SELECT id,cost FROM goods FORCE INDEX (id,cost) ORDER BY ' . $col_name;
     } else {
-        $sql_ids = 'SELECT id FROM goods FORCE INDEX (' . $col_name . ') ORDER BY ' . $col_name . ' DESC';
+        $sql_ids = 'SELECT id,cost FROM goods FORCE INDEX (id,cost) ORDER BY ' . $col_name . ' DESC';
     }
 
     echo $sql_ids . "\n";
 
     $result_ids = $mysqli->query($sql_ids);
     $arr_id = array();
+
+    $count = 0;
     while ($row = $result_ids->fetch_array(MYSQLI_NUM)) {
-        array_push($arr_id, $row[0]);
-    }
-
-    $result_ids->free();
-
-    $num = 0;
-
-    $first = 0;
-    for ($i = 100; $i <= ceil($count / 100) * 100; $i += 100) {
-        if ($num % 1000 == 0 and $num != 0)
-            echo $num . "\n";
-
-        $sliced_arr = array();
-
-        for ($j = $first; $j < $first + 100; $j++) {
-            if (array_key_exists($j, $arr_id))
-                if ($arr_id[$j] != null)
-
-                    array_push($sliced_arr, $arr_id[$j]);
+        if ($count % 100 == 0 and $count != 0)
+        {
+            $memcache->set("ids_" . $type . "_" . $col_name . "_" . $count, $arr_id, false);
+            unset($arr_id);
+            $arr_id = array();
         }
-
-        $memcache->set("ids_" . $type . "_" . $col_name . "_" . $i, $sliced_arr);
-        $first = $i;
-        $num++;
-        unset($sliced_arr);
+        $arr_id[$row[0]] = $row[1];
+        $count ++;
     }
 
-    unset($arr_id);
+    if (count($arr_id) != 0)
+    {
+        $memcache->set("ids_" . $type . "_" . $col_name . "_" . ceil($count/100)*100, $arr_id, false);
+    }
+}
+
+
+function put_sorted_array_all($mysqli, $memcache)
+{
+    $sql_ids = 'SELECT id,cost FROM goods FORCE INDEX (id,cost) ORDER BY cost';
+
+    $result_ids = $mysqli->query($sql_ids);
+    $arr_all = array();
+
+    while ($row = $result_ids->fetch_array(MYSQLI_NUM)) {
+        $arr_all[$row[0]] = $row[1];
+    }
+    
+    echo count($arr_all) . "\n";
+
+    $memcache->set("all_ids", $arr_all, false);
 }
 
 function setArraysFromSql($mysqli, $memcache)
 {
     $count = getCountInBase($mysqli);
+
+    //$count = $memcache->get("count");
 
     put_sorted_array($mysqli, $memcache, "id", "sorted", $count);
     echo "done" . "\n";
@@ -120,7 +126,7 @@ function setOtherVars($mysqli, $memcache)
 {
     $count = getCountInBase($mysqli);
 
-    $memcache->set("count", ceil($count / 100) * 100);
+    $memcache->set("count", ceil($count / 100) * 100, false);
 
 }
 

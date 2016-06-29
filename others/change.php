@@ -1,8 +1,8 @@
 <?php
 
-define('MYSQL_BOTH', MYSQLI_BOTH);
-define('MYSQL_NUM', MYSQLI_NUM);
-define('MYSQL_ASSOC', MYSQLI_ASSOC);
+//define('MYSQL_BOTH', MYSQLI_BOTH);
+//define('MYSQL_NUM', MYSQLI_NUM);
+//define('MYSQL_ASSOC', MYSQLI_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include "../data_workers/settings.php";
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $memcache->delete($id_original);
 
-                $memcache->set($id_need_set, $new_arr);
+                $memcache->set($id_need_set, $new_arr, false);
 
                 update_chunk_delete($memcache, $id_original);
 

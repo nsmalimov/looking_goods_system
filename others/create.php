@@ -1,8 +1,8 @@
 <?php
 
-define('MYSQL_BOTH', MYSQLI_BOTH);
-define('MYSQL_NUM', MYSQLI_NUM);
-define('MYSQL_ASSOC', MYSQLI_ASSOC);
+//define('MYSQL_BOTH', MYSQLI_BOTH);
+//define('MYSQL_NUM', MYSQLI_NUM);
+//define('MYSQL_ASSOC', MYSQLI_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -16,6 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cost = $_POST['cost'];
     $id = $_POST['id_num'];
 
+    echo $url_image . "\n";
+
+    echo count($url_image);
+
     $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, $mysql_dbpass, $mysql_dbname);
 
     if ($mysqli->connect_errno) {
@@ -26,30 +30,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $memcache = new Memcache;
     $memcache->connect($memcache_host, $memcache_port) or exit("Could not connect to Memcached");
 
-    $sql = 'select id FROM goods WHERE id = ' . $id;
+    $sql = "INSERT INTO goods " .
+        "(id,cost,title,url_image,description)" .
+        "VALUES " .
+        "('$id','$cost','$title','$url_image','$description')";
+
     $result = $mysqli->query($sql);
 
-    if ($result->fetch_array(MYSQL_NUM)[0] != null) {
-        echo "<script>alert('id exist');</script>";
-    } else {
+    echo $result;
 
-        $sql = "INSERT INTO goods " .
-            "(id,cost,title,url_image,description)" .
-            "VALUES " .
-            "('$id','$cost','$title','$url_image','$description')";
+    if ($result)
+    {
+        if (mysqli_affected_rows($mysqli) > 0) {
+            update_chunk_create($memcache, $id, $cost);
 
-        $result = $mysqli->query($sql);
+            $to_insert = array("cost" => $cost, "description" => $description, "title" => $title,
+                "url_image" => $url_image);
 
-        if (!$result) {
-            die('Could not create data: ' . $mysqli->error);
+            $memcache->set($id, $to_insert, false);
+        } else {
+            echo "<script>alert('id exist');</script>";
         }
-
-        $to_insert = array("cost" => $cost, "description" => $description, "title" => $title,
-            "url_image" => $url_image);
-
-        $memcache->set($id, $to_insert, false);
-
-        update_chunk_create($memcache, $id, $cost);
+    }
+    else{
+        die('Could not insert data: ' . $mysqli->error);
     }
 
 

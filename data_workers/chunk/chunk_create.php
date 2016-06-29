@@ -5,13 +5,13 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
     $arr = $memcache->get("ids_" . $sort_type . "_" . $col_name . "_" . $i);
 
     if ($col_name == "cost") {
-        $first_elem = floatval($memcache->get(array_values($arr)[0])['cost']);
+        $first_elem = floatval(array_values($arr)[0]);
         $id_num_elem = floatval($cost);
-        $elem_last = floatval($memcache->get(end($arr))['cost']);
+        $elem_last = floatval(end($arr));
     } else {
-        $first_elem = intval(array_values($arr)[0]);
+        $first_elem = intval(array_keys($arr)[0]);
         $id_num_elem = intval($id_num);
-        $elem_last = intval(end($arr));
+        $elem_last = intval(end(array_keys($arr)));
     }
 
     if ($sort_type == "sorted") {
@@ -19,9 +19,9 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
             $num1 = 0;
             foreach ($arr as $key => $value) {
                 if ($col_name == "cost")
-                    $val = floatval($memcache->get(intval($value))['cost']);
-                else
                     $val = intval($value);
+                else
+                    $val = intval($key);
 
                 if ($val >= $id_num_elem) {
                     $inserted = array($id_num);
@@ -53,9 +53,9 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
             $num1 = 0;
             foreach ($arr as $key => $value) {
                 if ($col_name == "cost")
-                    $val = floatval($memcache->get(intval($value))['cost']);
+                    $val = floatval($value);
                 else
-                    $val = intval($value);
+                    $val = intval($key);
 
                 if ($val <= $id_num_elem) {
                     $inserted = array($id_num);
@@ -90,6 +90,8 @@ function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_
 
 function update_chunk_create($memcache, $id_num, $cost)
 {
+    $time_start = microtime(true);
+
     $count = intval($memcache->get("count"));
 
     $ids_sorted_id_need = True;
@@ -121,6 +123,12 @@ function update_chunk_create($memcache, $id_num, $cost)
             break;
         }
     }
+
+    $time_end = microtime(true);
+
+    $execution_time = ($time_end - $time_start);
+
+    echo '<b>Total Execution Time:</b> '.$execution_time.' Mins';
 }
 
 ?>
