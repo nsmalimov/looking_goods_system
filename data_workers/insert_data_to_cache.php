@@ -56,45 +56,32 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
     $arr_id = array();
 
     $count = 0;
-    while ($row = $result_ids->fetch_array(MYSQLI_NUM)) {
+    $num = 1;
+    while ($row = $result_ids->fetch_array(MYSQLI_ASSOC)) {
         if ($count % 100 == 0 and $count != 0)
         {
-            $memcache->set("ids_" . $type . "_" . $col_name . "_" . $count, $arr_id, false);
+            $memcache->set("ids_" . $type . "_" . $col_name . "_" . $num, $arr_id, false);
+            
+            //echo "ids_" . $type . "_" . $col_name . "_" . $num;
             unset($arr_id);
             $arr_id = array();
+            $num ++;
         }
-        $arr_id[$row[0]] = $row[1];
+        $arr_id[$row['id']] = $row['cost'];
         $count ++;
     }
 
     if (count($arr_id) != 0)
     {
-        $memcache->set("ids_" . $type . "_" . $col_name . "_" . ceil($count/100)*100, $arr_id, false);
+        $memcache->set("ids_" . $type . "_" . $col_name . "_" . ($num+1), $arr_id, false);
     }
-}
 
-
-function put_sorted_array_all($mysqli, $memcache)
-{
-    $sql_ids = 'SELECT id,cost FROM goods FORCE INDEX (id,cost) ORDER BY cost';
-
-    $result_ids = $mysqli->query($sql_ids);
-    $arr_all = array();
-
-    while ($row = $result_ids->fetch_array(MYSQLI_NUM)) {
-        $arr_all[$row[0]] = $row[1];
-    }
-    
-    echo count($arr_all) . "\n";
-
-    $memcache->set("all_ids", $arr_all, false);
+    unset($arr_id);
 }
 
 function setArraysFromSql($mysqli, $memcache)
 {
     $count = getCountInBase($mysqli);
-
-    //$count = $memcache->get("count");
 
     put_sorted_array($mysqli, $memcache, "id", "sorted", $count);
     echo "done" . "\n";
@@ -130,11 +117,26 @@ function setOtherVars($mysqli, $memcache)
 
 }
 
-setAllDataFromSQL($mysqli, $memcache);
+//setAllDataFromSQL($mysqli, $memcache);
 
 setArraysFromSql($mysqli, $memcache);
 
 setOtherVars($mysqli, $memcache);
+
+// 57
+
+//for ($i = 1; $i <= $memcache->get("count"); $i ++) {
+//    
+//    //echo $i . "\n";
+//    $arr = $memcache->get("ids_sorted_cost_" . $i);
+//
+//    if (array_key_exists("55", $arr))
+//    {
+//        echo $i;
+//    }
+//}
+
+//print_r($memcache->get("ids_sorted_id_100"));
 
 $memcache->close();
 

@@ -28,8 +28,7 @@ switch ($sort_type) {
 }
 
 $need_pages = $count / 100;
-
-$page_current = $num / 100;
+$page_current = $num;
 
 $ids_need_arr = $memcache->get($sort_type . $num);
 
@@ -40,7 +39,7 @@ echo "<div class='section'><div class='container'>";
 //$inserted = 0;
 
 foreach ($ids_need_arr as $key => $value) {
-    $row = $memcache->get($value);
+    $row = $memcache->get($key);
 
 //    if ($row == null)
 //        continue;
@@ -76,7 +75,7 @@ echo "<div id=\"page-selection\"></div>
 
     }).on(\"page\", function (event, num) {
 
-        showAllFunc(num * 100, $('#sort_type').text());
+        showAllFunc(num, $('#sort_type').text());
     });
 </script>
 <p id=\"page_num\" style=\"visibility: hidden\">" . $page_current . "</p>

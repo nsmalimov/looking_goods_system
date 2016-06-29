@@ -175,13 +175,13 @@ function showAllFunc(need_count, type) {
 
 window.onload = function () {
     showAllControlButton();
-    showAllFunc(100, "Id (ascending)");
+    showAllFunc(1, "Id (ascending)");
 
     $(".dropdown-menu li a").click(function () {
         var selText = $(this).text();
         $(this).parents('.btn-group').find('.dropdown-toggle').html(selText + ' <span class="caret"></span>');
         $("#sort_type").text(selText);
-        showAllFunc(parseInt($("#page_num").text()) * 100, $("#sort_type").text());
+        showAllFunc(parseInt($("#page_num").text()) * 1, $("#sort_type").text());
     });
 };
 

@@ -1,76 +1,86 @@
 <?php
 
+
+function remove_from_chunk($memcache, $count, $id_num, $cost, $col_name)
+{
+    $pages =  ceil($count / 100);
+
+    //$median = ceil(ceil($pages / 2) / 100)*100;
+
+    $left = 0;
+    $right = $pages;
+
+    $median = ceil(($left + $right) / 2);
+
+    while ($right - $left >= 1)
+    {
+        $arr = $memcache->get("ids_sorted_" . $col_name . "_" . $median);
+
+        if ($col_name == "id")
+        {
+            $first = intval(array_keys($arr)[0]);
+        }
+        else{
+            $first = floatval(array_values($arr)[0]);
+        }
+
+        if ($col_name != "id") {
+            echo $median . "\n";
+        }
+
+
+
+        if (array_key_exists($id_num, $arr)) {
+            unset($arr[$id_num]);
+            $memcache->replace("ids_sorted_" . $col_name . "_" . $median, $arr);
+
+            echo "delete " . $col_name . "\n";
+
+            break;
+        }
+
+
+        
+        //if ($median == 100)
+        //{
+        //    break;
+        //}
+
+        if ($col_name == "id") {
+            if (intval($id_num) < $first) {
+                $right = $median;
+            } else {
+                $left = $median;
+
+            }
+        }
+        else
+        {
+            if (floatval($cost) <= $first) {
+                $right = $median;
+            } else {
+                $left = $median;
+
+            }
+        }
+
+        $median = ceil(($left + $right) / 2);
+    }
+}
+
 function update_chunk_delete($memcache, $id_num)
 {
     $time_start = microtime(true);
 
     $count = intval($memcache->get("count"));
 
-    $ids_sorted_id_need = True;
-    $ids_reversed_id_need = True;
-    $ids_sorted_cost_need = True;
-    $ids_reversed_cost_need = True;
+    $elem = $memcache->get($id_num);
 
-    for ($i = 100; $i <= $count; $i += 100) {
-        if ($ids_sorted_id_need) {
-            $arr = $memcache->get("ids_sorted_id_" . $i);
+    $cost = floatval($elem["cost"]);
 
-            if (array_key_exists($id_num, $arr)) {
-                unset($arr[$id_num]);
-                $memcache->replace("ids_sorted_id_" . $i, $arr);
+    remove_from_chunk($memcache, $count, $id_num, $cost, "id");
 
-                $ids_sorted_id_need = False;
-            }
-
-            unset($arr);
-        }
-
-        if ($ids_reversed_id_need) {
-            $arr = $memcache->get("ids_reversed_id_" . $i);
-
-            if (array_key_exists($id_num, $arr)) {
-                unset($arr[$id_num]);
-                $memcache->replace("ids_reversed_id_" . $i, $arr);
-
-                $ids_reversed_id_need = False;
-            }
-
-            unset($arr);
-        }
-
-        if ($ids_sorted_cost_need) {
-            $arr = $memcache->get("ids_sorted_cost_" . $i);
-
-            if (array_key_exists($id_num, $arr)) {
-                unset($arr[$id_num]);
-                $memcache->replace("ids_sorted_cost_" . $i, $arr);
-
-                $ids_sorted_cost_need = False;
-            }
-
-            unset($arr);
-        }
-
-        if ($ids_reversed_cost_need) {
-            $arr = $memcache->get("ids_reversed_cost_" . $i);
-
-            if (array_key_exists($id_num, $arr)) {
-                unset($arr[$id_num]);
-                $memcache->replace("ids_reversed_cost_" . $i, $arr);
-
-                $ids_reversed_cost_need = False;
-            }
-
-            unset($arr);
-        }
-
-        if (!$ids_reversed_cost_need and !$ids_reversed_id_need
-            and !$ids_sorted_id_need and !$ids_sorted_cost_need)
-        {
-            echo "break";
-            break;
-        }
-    }
+    remove_from_chunk($memcache, $count, $id_num, $cost, "cost");
 
     $time_end = microtime(true);
 
@@ -78,5 +88,17 @@ function update_chunk_delete($memcache, $id_num)
 
     echo '<b>Total Execution Time:</b> '.$execution_time.' Mins';
 }
+
+//$memcache = new Memcache;
+//$memcache->connect("localhost", 11211) or exit("Could not connect to Memcached");
+
+
+// if not exist?
+//update_chunk_delete($memcache, "54");
+
+//print_r($memcache->get("ids_sorted_id_1"));
+
+//$memcache->close();
+
 
 ?>

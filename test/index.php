@@ -6,18 +6,14 @@ $a = range(1, 1000000);
 
 $time_start = microtime(true);
 
-$k = 500000;
+$obj = new SplMinHeap();
 
-//echo array_keys($a)[100] . "\n";
-
-$r = array_search($k, $a);
+//$r = array_search($k, $a);
 //for ($i = 0; $i < count($a); $i++)
 //{
-//    if ($i == $k)
-//    {
-//        echo "111 \n";
-//    }
+//    $obj->insert($i);
 //}
+
 
 $time_end = microtime(true);
 
