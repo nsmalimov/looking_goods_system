@@ -73,7 +73,7 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
 
     if (count($arr_id) != 0)
     {
-        $memcache->set("ids_" . $type . "_" . $col_name . "_" . ($num+1), $arr_id, false);
+        $memcache->set("ids_" . $type . "_" . $col_name . "_" . $num, $arr_id, false);
     }
 
     unset($arr_id);
@@ -125,16 +125,18 @@ setOtherVars($mysqli, $memcache);
 
 // 57
 
-//for ($i = 1; $i <= $memcache->get("count"); $i ++) {
+//for ($i = 1; $i <= $memcache->get("count")/100; $i ++) {
 //    
 //    //echo $i . "\n";
-//    $arr = $memcache->get("ids_sorted_cost_" . $i);
+//    $arr = $memcache->get("ids_reversed_id_" . $i);
 //
-//    if (array_key_exists("55", $arr))
+//    if (array_key_exists("59", $arr))
 //    {
 //        echo $i;
 //    }
 //}
+
+//print_r($memcache->get("ids_sorted_id_10000"));
 
 //print_r($memcache->get("ids_sorted_id_100"));
 

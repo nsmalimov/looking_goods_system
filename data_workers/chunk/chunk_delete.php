@@ -1,9 +1,9 @@
 <?php
 
 
-function remove_from_chunk($memcache, $count, $id_num, $cost, $col_name)
+function remove_from_chunk($memcache, $count, $id_num, $cost, $col_name, $type)
 {
-    $pages =  ceil($count / 100);
+    $pages = ceil($count / 100);
 
     //$median = ceil(ceil($pages / 2) / 100)*100;
 
@@ -12,54 +12,57 @@ function remove_from_chunk($memcache, $count, $id_num, $cost, $col_name)
 
     $median = ceil(($left + $right) / 2);
 
-    while ($right - $left >= 1)
+    if ($col_name == "id") {
+        $comparison_val = intval($id_num);
+    }
+    else
     {
-        $arr = $memcache->get("ids_sorted_" . $col_name . "_" . $median);
+        $comparison_val = floatval($cost);
+    }
+    
+    $flag_while = False;
 
-        if ($col_name == "id")
-        {
+    while (True) {
+        $arr = $memcache->get("ids_" . $type . "_" . $col_name . "_" . $median);
+
+        if ($col_name == "id" and (!$flag_while)) {
             $first = intval(array_keys($arr)[0]);
-        }
-        else{
+        } else {
             $first = floatval(array_values($arr)[0]);
+
         }
 
-        if ($col_name != "id") {
-            echo $median . "\n";
-        }
+        //if ($col_name != "id") {
+        //    echo $median . "\n";
+        //}
 
-
+        //echo ($right - $left) . "\n";
 
         if (array_key_exists($id_num, $arr)) {
             unset($arr[$id_num]);
-            $memcache->replace("ids_sorted_" . $col_name . "_" . $median, $arr);
+            $memcache->replace("ids_" . $type . "_" . $col_name . "_" . $median, $arr);
 
-            echo "delete " . $col_name . "\n";
-
+            echo "delete " . $col_name . " " . $type . "\n";
+        }
+        
+        if (($right - $left) == 1)
+        {
             break;
         }
 
 
-        
-        //if ($median == 100)
-        //{
-        //    break;
-        //}
-
-        if ($col_name == "id") {
-            if (intval($id_num) < $first) {
+        if ($type == "sorted") {
+            if ($comparison_val <= $first) {
                 $right = $median;
             } else {
                 $left = $median;
 
             }
-        }
-        else
-        {
-            if (floatval($cost) <= $first) {
-                $right = $median;
-            } else {
+        } else {
+            if ($comparison_val <= $first) {
                 $left = $median;
+            } else {
+                $right = $median;
 
             }
         }
@@ -78,27 +81,39 @@ function update_chunk_delete($memcache, $id_num)
 
     $cost = floatval($elem["cost"]);
 
-    remove_from_chunk($memcache, $count, $id_num, $cost, "id");
+    remove_from_chunk($memcache, $count, $id_num, $cost, "id", "sorted");
+    
+    //echo "id" . " sorted" . "\n";
 
-    remove_from_chunk($memcache, $count, $id_num, $cost, "cost");
+    remove_from_chunk($memcache, $count, $id_num, $cost, "cost", "sorted");
+
+    //echo "cost" . " sorted" . "\n";
+
+    remove_from_chunk($memcache, $count, $id_num, $cost, "id", "reversed");
+
+    //echo "id" . " reversed" . "\n";
+
+    remove_from_chunk($memcache, $count, $id_num, $cost, "cost", "reversed");
+
+    //echo "cost" . " reversed" . "\n";
 
     $time_end = microtime(true);
 
     $execution_time = ($time_end - $time_start);
 
-    echo '<b>Total Execution Time:</b> '.$execution_time.' Mins';
+    echo '<b>Total Execution Time:</b> ' . $execution_time . ' Mins';
 }
 
-//$memcache = new Memcache;
-//$memcache->connect("localhost", 11211) or exit("Could not connect to Memcached");
+$memcache = new Memcache;
+$memcache->connect("localhost", 11211) or exit("Could not connect to Memcached");
 
 
 // if not exist?
-//update_chunk_delete($memcache, "54");
+update_chunk_delete($memcache, "59");
 
-//print_r($memcache->get("ids_sorted_id_1"));
+//print_r($memcache->get("ids_sorted_cost_290"));
 
-//$memcache->close();
+$memcache->close();
 
 
 ?>
