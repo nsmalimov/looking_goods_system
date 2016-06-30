@@ -23,7 +23,7 @@ function setAllDataFromSQL($mysqli, $memcache)
     $sql_all = 'SELECT * FROM goods';
 
     $result_all = $mysqli->query($sql_all);
-    
+
     $count = 0;
 
     while ($row = $result_all->fetch_array(MYSQL_ASSOC)) {
@@ -58,21 +58,19 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
     $count = 0;
     $num = 1;
     while ($row = $result_ids->fetch_array(MYSQLI_ASSOC)) {
-        if ($count % 100 == 0 and $count != 0)
-        {
+        if ($count % 100 == 0 and $count != 0) {
             $memcache->set("ids_" . $type . "_" . $col_name . "_" . $num, $arr_id, false);
-            
+
             //echo "ids_" . $type . "_" . $col_name . "_" . $num;
             unset($arr_id);
             $arr_id = array();
-            $num ++;
+            $num++;
         }
         $arr_id[$row['id']] = $row['cost'];
-        $count ++;
+        $count++;
     }
 
-    if (count($arr_id) != 0)
-    {
+    if (count($arr_id) != 0) {
         $memcache->set("ids_" . $type . "_" . $col_name . "_" . $num, $arr_id, false);
     }
 

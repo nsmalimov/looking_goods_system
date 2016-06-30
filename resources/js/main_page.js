@@ -1,19 +1,7 @@
-var serverPath = "";
 var serverHostName = window.location.hostname;
 var serverProtocolName = window.location.protocol;
 
-var portName = window.location.port;
-
-if (portName.length == 0) {
-    portName = "80";
-}
-
-if (serverHostName === "localhost") {
-    serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
-}
-else {
-    serverPath = serverProtocolName + "//" + serverHostName;
-}
+var serverPath = serverProtocolName + "//" + serverHostName;
 
 var append_path = "/looking_goods_system";
 
@@ -181,7 +169,7 @@ window.onload = function () {
         var selText = $(this).text();
         $(this).parents('.btn-group').find('.dropdown-toggle').html(selText + ' <span class="caret"></span>');
         $("#sort_type").text(selText);
-        showAllFunc(parseInt($("#page_num").text()) * 1, $("#sort_type").text());
+        showAllFunc(parseInt($("#page_num").text()), $("#sort_type").text());
     });
 };
 

@@ -39,8 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     echo $result;
 
-    if ($result)
-    {
+    if ($result) {
         if (mysqli_affected_rows($mysqli) > 0) {
             update_chunk_create($memcache, $id, $cost);
 
@@ -51,8 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "<script>alert('id exist');</script>";
         }
-    }
-    else{
+    } else {
         die('Could not insert data: ' . $mysqli->error);
     }
 

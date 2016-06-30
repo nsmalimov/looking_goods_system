@@ -36,8 +36,6 @@ $counter = 0;
 
 echo "<div class='section'><div class='container'>";
 
-//$inserted = 0;
-
 foreach ($ids_need_arr as $key => $value) {
     $row = $memcache->get($key);
 
@@ -74,7 +72,7 @@ echo "<div id=\"page-selection\"></div>
         maxVisible: 28
 
     }).on(\"page\", function (event, num) {
-
+    
         showAllFunc(num, $('#sort_type').text());
     });
 </script>

@@ -46,40 +46,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, $mysql_dbpass, $mysql_dbname);
 
-            $sql = 'select id FROM goods WHERE id = ' . $id_need_set;
-            $result = $mysqli->query($sql);
-
-            if ($result->fetch_array(MYSQL_NUM)[0] != null and $id_original != $id_need_set) {
-                echo "<script>alert('id exist');</script>";
-            } else {
-
-                if ($mysqli->connect_errno) {
-                    printf("Cannot connect to mysql: %s\n", $mysqli->connect_error);
-                    exit();
-                }
-
-                $sql = "UPDATE goods SET id = '{$id_need_set}', title = '{$title}', 
+            $sql = "UPDATE goods SET id = '{$id_need_set}', title = '{$title}', 
                     description = '{$description}', cost = '${cost}', url_image = '{$url_image}' 
                     WHERE id=" . $id_original;
 
-                $result = $mysqli->query($sql);
+            $result = $mysqli->query($sql);
 
-                if (!$result) {
-                    die('Could not change data: ' . $mysqli->error);
+            if ($result) {
+                if (mysqli_affected_rows($mysqli) > 0) {
+
+                    $new_arr = array("cost" => $cost, "description" => $description, "title" => $title,
+                        "url_image" => $url_image);
+
+                    $memcache->delete($id_original);
+
+                    $memcache->set($id_need_set, $new_arr, false);
+
+                    update_chunk_delete($memcache, $id_original);
+
+                    update_chunk_create($memcache, $id_need_set, $cost);
+
+                    unset($new_arr);
+
+                } else {
+                    echo "<script>alert('id not exist');</script>";
                 }
-
-                $new_arr = array("cost" => $cost, "description" => $description, "title" => $title,
-                    "url_image" => $url_image);
-
-                $memcache->delete($id_original);
-
-                $memcache->set($id_need_set, $new_arr, false);
-
-                update_chunk_delete($memcache, $id_original);
-
-                update_chunk_create($memcache, $id_need_set, $cost);
-
-                unset($new_arr);
+            } else {
+                die('Could not delete data: ' . $mysqli->error);
             }
 
             $mysqli->close();

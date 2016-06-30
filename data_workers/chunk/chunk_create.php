@@ -1,91 +1,83 @@
 <?php
 
-function find_put_chunk($memcache, $count, $i, $id_num, $cost, $sort_type, $col_name)
+function find_put_chunk($memcache, $count, $id_num, $cost, $col_name, $type)
 {
-    $arr = $memcache->get("ids_" . $sort_type . "_" . $col_name . "_" . $i);
+    $pages = ceil($count / 100);
 
-    if ($col_name == "cost") {
-        $first_elem = floatval(array_values($arr)[0]);
-        $id_num_elem = floatval($cost);
-        $elem_last = floatval(end($arr));
+    $left = 0;
+    $right = $pages;
+
+    $median = ceil(($left + $right) / 2);
+
+    if ($col_name == "id") {
+        $comparison_val = intval($id_num);
     } else {
-        $first_elem = intval(array_keys($arr)[0]);
-        $id_num_elem = intval($id_num);
-        $elem_last = intval(end(array_keys($arr)));
+        $comparison_val = floatval($cost);
     }
 
-    if ($sort_type == "sorted") {
-        if ($id_num_elem >= $first_elem and $id_num_elem <= $elem_last) {
-            $num1 = 0;
-            foreach ($arr as $key => $value) {
-                if ($col_name == "cost")
-                    $val = intval($value);
-                else
-                    $val = intval($key);
+    while (True) {
+        $arr = $memcache->get("ids_" . $type . "_" . $col_name . "_" . $median);
 
-                if ($val >= $id_num_elem) {
-                    $inserted = array($id_num);
-                    array_splice($arr, $num1, 0, $inserted);
+        if ($col_name == "id") {
+            $first = intval(array_keys($arr)[0]);
+            $last = intval(end(array_keys($arr)));
+        } else {
+            $first = floatval(array_values($arr)[0]);
+            $last = floatval(end($arr));
+        }
 
-                    $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
-                    unset($arr);
-                    return False;
-                }
-                $num1++;
+        if ((($comparison_val >= $first and $comparison_val <= $last) and $type == "sorted")
+            or (($comparison_val <= $first and $comparison_val >= $last) and $type == "reversed")
+
+            or (($comparison_val <= $first and $median == 1) and $type == "sorted")
+            or (($comparison_val >= $first and $median == $pages) and $type == "sorted")
+
+            or (($comparison_val >= $last and $median == 1) and $type == "reversed")
+            or (($comparison_val <= $last and $median == $pages) and $type == "reversed")
+        ) {
+
+            $arr[$id_num] = $cost;
+
+            if ($col_name == "id" and $type == "sorted") {
+                ksort($arr);
+            } elseif ($col_name == "id" and $type == "reversed") {
+                krsort($arr);
+            } elseif ($col_name == "cost" and $type == "sorted") {
+                asort($arr);
+            } elseif ($col_name == "cost" and $type == "reversed") {
+                arsort($arr);
+            }
+
+            $memcache->replace("ids_" . $type . "_" . $col_name . "_" . $median, $arr);
+
+            echo "insert " . $col_name . " " . $type . "\n";
+
+            break;
+        }
+
+        if (($right - $left) == 1) {
+            break;
+        }
+
+
+        if ($type == "sorted") {
+            if ($comparison_val <= $first) {
+                $right = $median;
+            } else {
+                $left = $median;
+
+            }
+        } else {
+            if ($comparison_val <= $first) {
+                $left = $median;
+            } else {
+                $right = $median;
+
             }
         }
 
-        if ($id_num_elem < $first_elem) {
-            array_unshift($arr, $id_num);
-            $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
-            unset($arr);
-            return False;
-        }
-
-        if ($i == $count and $id_num_elem > $elem_last) {
-            array_push($arr, $id_num);
-            $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
-            unset($arr);
-            return False;
-        }
-    } else {
-        if ($id_num_elem <= $first_elem and $id_num_elem >= $elem_last) {
-            $num1 = 0;
-            foreach ($arr as $key => $value) {
-                if ($col_name == "cost")
-                    $val = floatval($value);
-                else
-                    $val = intval($key);
-
-                if ($val <= $id_num_elem) {
-                    $inserted = array($id_num);
-                    array_splice($arr, $num1, 0, $inserted);
-
-                    $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
-                    unset($arr);
-                    return False;
-                }
-                $num1++;
-            }
-        }
-
-        if ($id_num_elem > $first_elem) {
-            array_unshift($arr, $id_num);
-            $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
-            unset($arr);
-            return False;
-        }
-
-        if ($i == $count and $id_num_elem < $elem_last) {
-            array_push($arr, $id_num);
-            $memcache->replace("ids_" . $sort_type . "_" . $col_name . "_" . $i, $arr);
-            unset($arr);
-            return False;
-        }
+        $median = ceil(($left + $right) / 2);
     }
-
-    unset($arr);
-    return True;
 }
 
 function update_chunk_create($memcache, $id_num, $cost)
@@ -94,41 +86,38 @@ function update_chunk_create($memcache, $id_num, $cost)
 
     $count = intval($memcache->get("count"));
 
-    $ids_sorted_id_need = True;
-    $ids_reversed_id_need = True;
-    $ids_sorted_cost_need = True;
-    $ids_reversed_cost_need = True;
+    find_put_chunk($memcache, $count, $id_num, $cost, "id", "sorted");
 
-    for ($i = 100; $i <= $count; $i += 100) {
+    find_put_chunk($memcache, $count, $id_num, $cost, "id", "reversed");
 
-        if ($ids_sorted_id_need) {
-            $ids_sorted_id_need = find_put_chunk($memcache, $count, $i, $id_num, $cost, "sorted", "id");
-        }
+    find_put_chunk($memcache, $count, $id_num, $cost, "cost", "sorted");
 
-        if ($ids_reversed_id_need) {
-            $ids_reversed_id_need = find_put_chunk($memcache, $count, $i, $id_num, $cost, "reversed", "id");
-        }
-
-        if ($ids_sorted_cost_need) {
-            $ids_sorted_cost_need = find_put_chunk($memcache, $count, $i, $id_num, $cost, "sorted", "cost");
-        }
-
-        if ($ids_reversed_cost_need) {
-            $ids_reversed_cost_need = find_put_chunk($memcache, $count, $i, $id_num, $cost, "reversed", "cost");
-        }
-
-        if (!$ids_reversed_id_need and !$ids_reversed_cost_need
-            and !$ids_sorted_cost_need and !$ids_sorted_id_need
-        ) {
-            break;
-        }
-    }
+    find_put_chunk($memcache, $count, $id_num, $cost, "cost", "reversed");
 
     $time_end = microtime(true);
 
     $execution_time = ($time_end - $time_start);
 
-    echo '<b>Total Execution Time:</b> '.$execution_time.' Mins';
+    echo '<b>Total Execution Time:</b> ' . $execution_time . ' Mins';
 }
+
+//$memcache = new Memcache;
+//$memcache->connect("localhost", 11211) or exit("Could not connect to Memcached");
+
+
+// if not exist?
+//update_chunk_create($memcache, "3", "1200");
+
+//print_r($memcache->get("ids_sorted_id_1"));
+
+//$arr = array("12"=>"3", "1456"=>"5", "433"=>"8", "454"=>"16", "87"=>"22", "99"=>"56");
+
+//$arr = binary_search_insert_small($arr, "456", "id");
+
+//array_splice($arr, 5, 0, "99000");
+
+//print_r($array_1);
+
+//$memcache->close();
 
 ?>

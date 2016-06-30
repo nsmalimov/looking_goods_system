@@ -27,17 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sql = 'DELETE FROM goods WHERE id = ' . "'$id'";
 
     $result = $mysqli->query($sql);
-    
-    if ($result)
-    {
+
+    if ($result) {
         if (mysqli_affected_rows($mysqli) > 0) {
             update_chunk_delete($memcache, $id);
             $memcache->delete($id);
         } else {
             echo "<script>alert('id not exist');</script>";
         }
-    }
-    else{
+    } else {
         die('Could not delete data: ' . $mysqli->error);
     }
 
