@@ -1,16 +1,18 @@
 <?php
 
 function create_clauses($memcache, $arr, $comparison_val, $first, $last, $type, $median,
-                        $pages, $cost, $id_num, $col_name)
+                        $pages, $cost, $id_num, $col_name, $right, $left)
 {
     if ((($comparison_val >= $first and $comparison_val <= $last) and $type == "sorted")
         or (($comparison_val <= $first and $comparison_val >= $last) and $type == "reversed")
 
         or (($comparison_val <= $first and $median == 1) and $type == "sorted")
-        or (($comparison_val >= $first and $median == $pages) and $type == "sorted")
+        or (($comparison_val >= $last and $median == $pages) and $type == "sorted")
 
-        or (($comparison_val >= $last and $median == 1) and $type == "reversed")
+        or (($comparison_val >= $first and $median == 1) and $type == "reversed")
         or (($comparison_val <= $last and $median == $pages) and $type == "reversed")
+
+        or (($right - $left) == 1)
     ) {
 
         $arr[$id_num] = $cost;
@@ -77,7 +79,7 @@ function find_put_chunk($memcache, $count, $id_num, $cost, $col_name, $type, $ty
 
         if ($type_work == "create") {
             $result = create_clauses($memcache, $arr, $comparison_val, $first, $last, $type, $median,
-                $pages, $cost, $id_num, $col_name);
+                $pages, $cost, $id_num, $col_name, $right, $left);
 
             if ($result) {
                 break;

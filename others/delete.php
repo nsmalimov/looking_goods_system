@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result) {
         if (mysqli_affected_rows($mysqli) > 0) {
-            update_chunk_delete($memcache, $id);
             $memcache->delete($id);
+            update_chunk_delete($memcache, $id);
         } else {
             echo "<script>alert('id not exist');</script>";
         }

@@ -39,9 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $to_insert = array("cost" => $cost, "description" => $description, "title" => $title,
                 "url_image" => $url_image);
 
-            $memcache->set($id, $to_insert, false);
-
             update_chunk_create($memcache, $id, $cost);
+            $memcache->set($id, $to_insert, false);
         } 
     } else {
         echo "<script>alert('id exist');</script>";

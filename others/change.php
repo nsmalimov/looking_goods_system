@@ -58,13 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $new_arr = array("cost" => $cost, "description" => $description, "title" => $title,
                         "url_image" => $url_image);
 
-                    $memcache->delete($id_original);
-
                     $memcache->set($id_need_set, $new_arr, false);
 
-                    update_chunk_delete($memcache, $id_original);
-
                     update_chunk_create($memcache, $id_need_set, $cost);
+
+                    $memcache->delete($id_original);
+
+                    update_chunk_delete($memcache, $id_original);
 
                     unset($new_arr);
 
