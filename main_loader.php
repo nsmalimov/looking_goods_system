@@ -33,14 +33,10 @@ $need_extract_num = ceil($page_current / 10);
 
 $ids_need_arr = $memcache->get($sort_type . $need_extract_num);
 
-echo count($ids_need_arr);
-
 $bord_first = ($page_current * 100) % 1000;
 
 if ($bord_first == 0)
     $bord_first = 1000;
-
-//echo $bord_first - 100 . "+" . $bord_first;
 
 $counter = 0;
 $inserted = 0;
@@ -50,12 +46,11 @@ echo "<div class='section'><div class='container'>";
 foreach ($ids_need_arr as $key => $value) {
     $row = $memcache->get($key);
 
-//    if ($row == null)
-//        continue;
+    if ($row == null)
+        continue;
 
-    if ($counter < ($bord_first - 100) or $counter >= $bord_first)
-    {
-        $counter ++;
+    if ($counter < ($bord_first - 100) or $counter >= $bord_first) {
+        $counter++;
         continue;
     }
 
@@ -75,7 +70,7 @@ foreach ($ids_need_arr as $key => $value) {
 
     $counter++;
 
-    $inserted ++;
+    $inserted++;
 }
 
 $memcache->close();
@@ -83,7 +78,7 @@ $memcache->close();
 echo "</div></div>";
 
 echo "<div id=\"page-selection\"></div>
-<script type=\"text/javascript\" src=\"http://localhost/looking_goods_system/resources/js/main_page.js\"></script>
+<script type=\"text/javascript\" src=\"/resources/js/main_page.js\"></script>
 <script>
     $('#page-selection').bootpag({
         total: $need_pages,

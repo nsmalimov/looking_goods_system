@@ -1,8 +1,8 @@
 <?php
 
-//define('MYSQL_BOTH', MYSQLI_BOTH);
-//define('MYSQL_NUM', MYSQLI_NUM);
-//define('MYSQL_ASSOC', MYSQLI_ASSOC);
+define('MYSQL_BOTH', MYSQLI_BOTH);
+define('MYSQL_NUM', MYSQLI_NUM);
+define('MYSQL_ASSOC', MYSQLI_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include "../data_workers/settings.php";

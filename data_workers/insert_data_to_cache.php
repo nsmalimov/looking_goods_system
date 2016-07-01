@@ -2,9 +2,9 @@
 
 include "settings.php";
 
-//define('MYSQL_BOTH', MYSQLI_BOTH);
-//define('MYSQL_NUM', MYSQLI_NUM);
-//define('MYSQL_ASSOC', MYSQLI_ASSOC);
+define('MYSQL_BOTH', MYSQLI_BOTH);
+define('MYSQL_NUM', MYSQLI_NUM);
+define('MYSQL_ASSOC', MYSQLI_ASSOC);
 
 ini_set('memory_limit', '750M');
 
@@ -23,7 +23,7 @@ function setAllDataFromSQL($mysqli, $memcache)
     $sql_all = 'SELECT * FROM goods';
 
     $result_all = $mysqli->query($sql_all);
-    
+
     $count = 0;
 
     while ($row = $result_all->fetch_array(MYSQL_ASSOC)) {
@@ -44,9 +44,9 @@ function setAllDataFromSQL($mysqli, $memcache)
 
 function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
 {
-    
+
     $partition_const = 1000;
-    
+
     if ($type == "sorted") {
         $sql_ids = 'SELECT id,cost FROM goods FORCE INDEX (id,cost) ORDER BY ' . $col_name;
     } else {
@@ -63,7 +63,7 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
     while ($row = $result_ids->fetch_array(MYSQLI_ASSOC)) {
         if ($count % $partition_const == 0 and $count != 0) {
             $memcache->set("ids_" . $type . "_" . $col_name . "_" . $num, $arr_id, false);
-            
+
             unset($arr_id);
             $arr_id = array();
             $num++;
@@ -116,40 +116,11 @@ function setOtherVars($mysqli, $memcache)
     $memcache->set("count", ceil($count / 1000) * 1000, false);
 }
 
-//setAllDataFromSQL($mysqli, $memcache);
+setAllDataFromSQL($mysqli, $memcache);
 
 setArraysFromSql($mysqli, $memcache);
 
 setOtherVars($mysqli, $memcache);
-
-// 57
-
-//for ($i = 1; $i <= $memcache->get("count")/100; $i ++) {
-//    
-//    //echo $i . "\n";
-//    $arr = $memcache->get("ids_reversed_id_" . $i);
-//
-//    if (array_key_exists("59", $arr))
-//    {
-//        echo $i;
-//    }
-//}
-
-//print_r(($memcache->get("ids_sorted_id_1")));
-
-//$bord_first = (0 * 100) % 1000;
-
-//echo $bord_first . "\n";
-
-//print_r($memcache->get("ids_sorted_id_100"));
-
-//$arr = array("11"=>"45", "122"=>"2", "456"=>"34", "989"=>"90");
-//
-//echo count($arr);
-//
-//unset($arr["11"]);
-//
-//echo count($arr);
 
 $memcache->close();
 

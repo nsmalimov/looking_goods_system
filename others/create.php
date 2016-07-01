@@ -1,8 +1,8 @@
 <?php
 
-//define('MYSQL_BOTH', MYSQLI_BOTH);
-//define('MYSQL_NUM', MYSQLI_NUM);
-//define('MYSQL_ASSOC', MYSQLI_ASSOC);
+define('MYSQL_BOTH', MYSQLI_BOTH);
+define('MYSQL_NUM', MYSQLI_NUM);
+define('MYSQL_ASSOC', MYSQLI_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -15,10 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $url_image = $_POST['url_image'];
     $cost = $_POST['cost'];
     $id = $_POST['id_num'];
-
-    echo $url_image . "\n";
-
-    echo count($url_image);
 
     $mysqli = new mysqli($mysql_dbhost, $mysql_dbuser, $mysql_dbpass, $mysql_dbname);
 
@@ -37,21 +33,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $result = $mysqli->query($sql);
 
-    echo $result;
-
     if ($result) {
         if (mysqli_affected_rows($mysqli) > 0) {
-            update_chunk_create($memcache, $id, $cost);
 
             $to_insert = array("cost" => $cost, "description" => $description, "title" => $title,
                 "url_image" => $url_image);
 
             $memcache->set($id, $to_insert, false);
-        } else {
-            echo "<script>alert('id exist');</script>";
-        }
+
+            update_chunk_create($memcache, $id, $cost);
+        } 
     } else {
-        die('Could not insert data: ' . $mysqli->error);
+        echo "<script>alert('id exist');</script>";
     }
 
 
