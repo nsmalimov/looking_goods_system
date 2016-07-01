@@ -23,7 +23,7 @@ function setAllDataFromSQL($mysqli, $memcache)
     $sql_all = 'SELECT * FROM goods';
 
     $result_all = $mysqli->query($sql_all);
-
+    
     $count = 0;
 
     while ($row = $result_all->fetch_array(MYSQL_ASSOC)) {
@@ -44,6 +44,9 @@ function setAllDataFromSQL($mysqli, $memcache)
 
 function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
 {
+    
+    $partition_const = 1000;
+    
     if ($type == "sorted") {
         $sql_ids = 'SELECT id,cost FROM goods FORCE INDEX (id,cost) ORDER BY ' . $col_name;
     } else {
@@ -58,10 +61,9 @@ function put_sorted_array($mysqli, $memcache, $col_name, $type, $count)
     $count = 0;
     $num = 1;
     while ($row = $result_ids->fetch_array(MYSQLI_ASSOC)) {
-        if ($count % 100 == 0 and $count != 0) {
+        if ($count % $partition_const == 0 and $count != 0) {
             $memcache->set("ids_" . $type . "_" . $col_name . "_" . $num, $arr_id, false);
-
-            //echo "ids_" . $type . "_" . $col_name . "_" . $num;
+            
             unset($arr_id);
             $arr_id = array();
             $num++;
@@ -111,8 +113,7 @@ function setOtherVars($mysqli, $memcache)
 {
     $count = getCountInBase($mysqli);
 
-    $memcache->set("count", ceil($count / 100) * 100, false);
-
+    $memcache->set("count", ceil($count / 1000) * 1000, false);
 }
 
 //setAllDataFromSQL($mysqli, $memcache);
@@ -134,9 +135,21 @@ setOtherVars($mysqli, $memcache);
 //    }
 //}
 
-//print_r($memcache->get("ids_sorted_id_10000"));
+//print_r(($memcache->get("ids_sorted_id_1")));
+
+//$bord_first = (0 * 100) % 1000;
+
+//echo $bord_first . "\n";
 
 //print_r($memcache->get("ids_sorted_id_100"));
+
+//$arr = array("11"=>"45", "122"=>"2", "456"=>"34", "989"=>"90");
+//
+//echo count($arr);
+//
+//unset($arr["11"]);
+//
+//echo count($arr);
 
 $memcache->close();
 

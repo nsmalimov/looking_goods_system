@@ -1,8 +1,10 @@
 <?php
 
+include "recovery.php";
+
 function find_put_chunk($memcache, $count, $id_num, $cost, $col_name, $type)
 {
-    $pages = ceil($count / 100);
+    $pages = ceil($count / 1000);
 
     $left = 0;
     $right = $pages;
@@ -49,6 +51,8 @@ function find_put_chunk($memcache, $count, $id_num, $cost, $col_name, $type)
             }
 
             $memcache->replace("ids_" . $type . "_" . $col_name . "_" . $median, $arr);
+
+            recovery_by_100_in_chunk($memcache, $median, "ids_" . $type . "_" . $col_name . "_", "create");
 
             echo "insert " . $col_name . " " . $type . "\n";
 
@@ -103,7 +107,18 @@ function update_chunk_create($memcache, $id_num, $cost)
 
 //$memcache = new Memcache;
 //$memcache->connect("localhost", 11211) or exit("Could not connect to Memcached");
-
+//
+//
+//$time_start = microtime(true);
+//
+//
+//
+//
+//$time_end = microtime(true);
+//
+//$execution_time = ($time_end - $time_start);
+//
+//echo '<b>Total Execution Time:</b> ' . $execution_time . ' Mins';
 
 // if not exist?
 //update_chunk_create($memcache, "3", "1200");

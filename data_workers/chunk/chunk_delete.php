@@ -1,9 +1,10 @@
 <?php
 
+include "recovery.php";
 
 function remove_from_chunk($memcache, $count, $id_num, $cost, $col_name, $type)
 {
-    $pages = ceil($count / 100);
+    $pages = ceil($count / 1000);
 
     $left = 0;
     $right = $pages;
@@ -29,6 +30,10 @@ function remove_from_chunk($memcache, $count, $id_num, $cost, $col_name, $type)
         if (array_key_exists($id_num, $arr)) {
             unset($arr[$id_num]);
             $memcache->replace("ids_" . $type . "_" . $col_name . "_" . $median, $arr);
+            
+            recovery_by_100_in_chunk($memcache, $median, "ids_" . $type . "_" . $col_name . "_", "delete");
+
+            echo count($memcache->get("ids_" . $type . "_" . $col_name . "_" . $median));
 
             echo "delete " . $col_name . " " . $type . "\n";
 

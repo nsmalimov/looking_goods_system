@@ -7,7 +7,7 @@ $memcache->connect($memcache_host, $memcache_port) or exit("Невозможно
 
 $count = intval($memcache->get("count"));
 
-$num = $_POST['num'];
+$page_current = $_POST['num'];
 $sort_type = $_POST['sort_type'];
 
 switch ($sort_type) {
@@ -28,11 +28,22 @@ switch ($sort_type) {
 }
 
 $need_pages = $count / 100;
-$page_current = $num;
 
-$ids_need_arr = $memcache->get($sort_type . $num);
+$need_extract_num = ceil($page_current / 10);
+
+$ids_need_arr = $memcache->get($sort_type . $need_extract_num);
+
+echo count($ids_need_arr);
+
+$bord_first = ($page_current * 100) % 1000;
+
+if ($bord_first == 0)
+    $bord_first = 1000;
+
+//echo $bord_first - 100 . "+" . $bord_first;
 
 $counter = 0;
+$inserted = 0;
 
 echo "<div class='section'><div class='container'>";
 
@@ -42,7 +53,13 @@ foreach ($ids_need_arr as $key => $value) {
 //    if ($row == null)
 //        continue;
 
-    if ($counter % 6 == 0) {
+    if ($counter < ($bord_first - 100) or $counter >= $bord_first)
+    {
+        $counter ++;
+        continue;
+    }
+
+    if ($inserted % 6 == 0) {
         echo "</div>";
         echo "<div class='row'>";
     }
@@ -57,6 +74,8 @@ foreach ($ids_need_arr as $key => $value) {
             </div>";
 
     $counter++;
+
+    $inserted ++;
 }
 
 $memcache->close();
@@ -72,7 +91,7 @@ echo "<div id=\"page-selection\"></div>
         maxVisible: 28
 
     }).on(\"page\", function (event, num) {
-    
+
         showAllFunc(num, $('#sort_type').text());
     });
 </script>
