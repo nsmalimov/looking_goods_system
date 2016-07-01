@@ -2,8 +2,6 @@
 
 function recovery_by_100_in_chunk($memcache, $num_start, $string, $type_method)
 {
-    //echo $num_start . "|" . $string . "| \n";
-
     $current_arr = $memcache->get($string . $num_start);
 
     for ($i = ($num_start + 1); $i <= 100; $i++) {

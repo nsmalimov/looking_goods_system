@@ -1,7 +1,7 @@
 <?php
 
-include "recovery.php";
-include "binary_search.php";
+include_once "recovery.php";
+include_once "binary_search.php";
 
 function update_chunk_create($memcache, $id_num, $cost)
 {
